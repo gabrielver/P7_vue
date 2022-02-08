@@ -1,0 +1,65 @@
+<template>
+  <div id="app">
+      <div class="wrapper">
+        <section class="form login">
+          <header>GROUPOMANIA social wall</header>
+          <form class="cart__order__form" @submit.prevent="createPost"  autocomplete="off">
+            <div class="error-text"></div>
+            <div id="signup">
+              <div class="field input">
+                <label>Email Address</label>
+                <input type="email"  id="email" v-model="post.email" placeholder="Enter your email" required>
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="field input">
+                <label>Password</label>
+                <input type="text"  id="password" v-model="post.password" placeholder="Enter your password" required>
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="field button">
+                <button
+                type="submit" class="button">Connexion</button>
+              </div>
+              </div>
+          </form>
+          <div class="link">Not yet signed up? <a href="Signup.vue">Signup now</a></div>
+        </section>
+      </div>
+      
+        </div>
+</template>
+<script>
+export default {
+  name: "App",
+  data() {
+    return {
+      post: {},
+      data: {}
+    };
+  },
+  methods: {
+    async createPost() {
+    const self = this;
+      const postData = {
+        email: this.post.email,
+        password: this.post.password,
+      };
+      fetch(
+        "http://localhost:3000/api/auth/login",
+        {
+          method: "POST",
+          headers: { 'Accept': 'application/json',
+                      'Content-Type': 'application/json'},
+          body: JSON.stringify(postData)
+        })
+     .then(function (res) {
+        if (res.ok) {
+            return res.json(),
+            self.$router.push('/profile');
+        }
+    })
+    
+    }
+  }
+};
+</script>
