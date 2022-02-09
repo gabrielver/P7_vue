@@ -22,10 +22,10 @@
               </div>
               </div>
           </form>
-          <div class="link">Not yet signed up? <a href="Signup.vue">Signup now</a></div>
+          <div class="link">Not yet signed up? <router-link :to="{name:'Signup'}" replace>Signup now</router-link></div>
         </section>
       </div>
-      
+      <div>{{idx}}</div>
         </div>
 </template>
 <script>
@@ -34,12 +34,15 @@ export default {
   data() {
     return {
       post: {},
-      data: {}
+      data: {},
+      idx:{}
     };
   },
   methods: {
     async createPost() {
-    const self = this;
+      const self = this;
+      let idx = "";
+      let token = "";
       const postData = {
         email: this.post.email,
         password: this.post.password,
@@ -52,14 +55,18 @@ export default {
                       'Content-Type': 'application/json'},
           body: JSON.stringify(postData)
         })
-     .then(function (res) {
-        if (res.ok) {
-            return res.json(),
-            self.$router.push('/profile');
+        .then(function(res){
+          if (res.ok){  
+            return res.json();
+         //self.$router.push({ name: 'Profile', params: {id: "name1" } , replace: true});
         }
-    })
-    
-    }
+        })
+        .then (function(data) {
+          idx = data.userId,
+          token = data.token,
+          self.$router.push({ name: 'Profile', params: {id: idx } , replace: true});
+        });
+        return (idx, token) }
   }
 };
 </script>

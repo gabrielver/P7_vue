@@ -3,7 +3,7 @@
       <div class="wrapper">
         <section class="form login">
           <header>GROUPOMANIA social wall</header>
-          <form class="cart__order__form"   autocomplete="off">
+          <form class="cart__order__form" @submit.prevent="createPost"  autocomplete="off">
             <div class="error-text"></div>
             <div id="signup">
               <div class="field input">
@@ -31,7 +31,8 @@
               </div>
               </div>
           </form>
-          <div class="link">Already signed up? <a href="Login.vue">Login now</a></div>
+          <div class="link">Already signed up? <router-link :to="{name:'Login'}" replace>Login now</router-link></div>
+          
         </section>
       </div>
       
@@ -49,6 +50,7 @@ export default {
   methods: {
     async createPost() {
     const self = this;
+    const name1 = this.post.name;
       const postData = {
         name: this.post.name,
         pseudo: this.post.pseudo,
@@ -64,7 +66,7 @@ export default {
           body: JSON.stringify(postData)
         })
       .then(function () {
-        self.$router.push('/profile');
+        self.$router.push({ name: 'Profile', params: {id: name1 } , replace: true});
         })
     
     }

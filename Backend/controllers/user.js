@@ -14,7 +14,12 @@ exports.signup = (req, res, next) => {
         email: req.body.email,
         password: hash
       })
-        .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+        .then(() => res.status(201).json({ message: 'Utilisateur créé !', 
+        userId: users.user_id,
+        token: jwt.sign(
+          { userId: users.user_id },process.env.APP_KEY,
+          { expiresIn: '24h' }
+        ) }))
         .catch(error => res.status(400).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
