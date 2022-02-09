@@ -43,6 +43,7 @@ export default {
       const self = this;
       let idx = "";
       let token = "";
+      let pseudo = "";
       const postData = {
         email: this.post.email,
         password: this.post.password,
@@ -64,9 +65,12 @@ export default {
         .then (function(data) {
           idx = data.userId,
           token = data.token,
-          self.$router.push({ name: 'Profile', params: {id: idx } , replace: true});
+          pseudo = data.pseudo,
+         
+          self.$router.push({ name: 'Profile', params: {id : idx } });
         });
-        return (idx, token) }
+        return (idx, token, pseudo) }
+
   }
 };
 </script>

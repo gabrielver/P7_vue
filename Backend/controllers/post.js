@@ -1,12 +1,15 @@
 const Post = require('../models/Post');
+const users = require('../models/User');
 require('dotenv').config({path:'./.env'}); 
 
 
 
 exports.getAllPost = async (req, res, next) => {
     const posts = await Post.findAll({
-        order : [['id', 'DESC']]
+        order : [['id', 'DESC']],
+        // include: users
     });
+    console.log( 'name:', posts.name)
     return res.status(200).json(posts);
 };
 

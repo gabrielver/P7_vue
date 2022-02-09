@@ -44,13 +44,16 @@ export default {
   data() {
     return {
       post: {},
-      data: {}
+      data: {},
+      idx:{}
     };
   },
   methods: {
     async createPost() {
-    const self = this;
-    const name1 = this.post.name;
+     const self = this;
+      let idx = "";
+      let token = "";
+      let pseudo = "";
       const postData = {
         name: this.post.name,
         pseudo: this.post.pseudo,
@@ -65,11 +68,21 @@ export default {
                       'Content-Type': 'application/json'},
           body: JSON.stringify(postData)
         })
-      .then(function () {
-        self.$router.push({ name: 'Profile', params: {id: name1 } , replace: true});
+        .then(function(res){
+          if (res.ok){  
+            return res.json();
+         //self.$router.push({ name: 'Profile', params: {id: "name1" } , replace: true});
+        }
         })
-    
-    }
+      .then (function(data) {
+          idx = data.userId,
+          token = data.token,
+          pseudo = data.pseudo,
+         
+          self.$router.push({ name: 'Profile', params: {id : idx } });
+        });
+        return (idx, token, pseudo) }
+
   }
 };
 </script>
@@ -323,23 +336,7 @@ body {
   outline: none;
   border-radius: 5px 0 0 5px;
 }
-.typing-comment button {
-  color: #fff;
-  width: 55px;
-  border: none;
-  outline: none;
-  background: #333;
-  font-size: 19px;
-  cursor: pointer;
-  opacity: 0.7;
-  pointer-events: none;
-  border-radius: 0 5px 5px 0;
-  transition: all 0.3s ease;
-}
-.typing-comment button.active {
-  opacity: 1;
-  pointer-events: auto;
-}
+
 
 .more {
   display: flex;

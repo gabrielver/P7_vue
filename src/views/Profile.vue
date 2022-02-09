@@ -5,8 +5,8 @@
         <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a>
         <div class="details">
         <img src="" alt="">
-          <span>pseudo</span> |
-          <p>statut</p>
+          <span>{{user.name}}</span> |
+          <p>{{user.user_id}}</p>
           <button>Exit</button>
           </div>
           <div class="new_message">
@@ -22,23 +22,26 @@
             <div class="user_details">          
                 <img src="" alt="">
                 <p>{{message.id}}</p> |
-                <p>{{message.user_id}}</p>
+                <p v-if="message.user_id === user.user_id">{{user.name}}</p>
            </div>
            <div class="message_details">
                 <p>{{message.content}}</p>
-                <button><i  class="far fa-thumbs-up"></i></button>
+                <button class="like">Like</button>
                 <span >0</span>
-                <button classe="like"><i  class="far fa-thumbs-down"></i></button>
+                <button classe="dislike">Dislike</button>
                 <span >0</span>
             </div>
-            <div class="comment">
-            <form action="#" class="typing-comment">
-                <input type="text" name="outgoing_id"   hidden>
-                <input type="text" name="comment"  class="input-comment" placeholder="Type a comment here..." autocomplete="off">
-                <button><i class="fab fa-telegram-plane"></i></button>
+            <div class="comment" id="user">
+              <button @click="toggle = !toggle">commenter</button>
+            <form v-show="toggle" @submit.prevent="createAComment" class="typing-comment">
+                <input type="text" name="user_id" v-model="user.user_id" hidden >
+                <input type="text" name="post_id" v-model="message.id" hidden >
+                <input type="text" name="comment"  v-model="comment.message" class="input-comment" placeholder="Type a comment here..." autocomplete="off">
+                <button type="submit"  class="button">send it</button>
                 </form>
             </div>        
       </div>
+    
     </section>
   </div>
   </template>
@@ -47,33 +50,55 @@ export default {
   name: "#user",
   data() {
     return {
+      toggle : false,
        messages: [ {
            id: {},
            user_id: {},
            content: {}
        }],
-       post:{}
+       user:[{
+         user_id: {},
+         name: {},
+         
+       }],
+       post:{},
+       comment: {}
       
     };
   },
    beforeMount(){
-    this.getName();
+    this.getMessage();
+    this.getUser();
   },
   methods: {
    
-     async getName(){
+     async getMessage(){
       const res = await fetch('http://localhost:3000/api/post/all');
       const data = await res.json();
       this.messages = data;
+      console.log(data)
     },
-  
 
-     createAPost() {
+    async getUser(){
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      console.log(lastURLSegment);
+      let id = lastURLSegment;  
+      console.log(id)
+      const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
+      const data1 = await res1.json();
+      this.user = data1;
+      console.log(data1);
+    },
+    
+
+    createAPost() {
       const postData = {
-        userId: "2",
-        content: this.post.content,
+        userId: this.user.user_id,
+        content: this.post.content
         
       };
+      console.log(postData);
       fetch(
         "http://localhost:3000/api/post",
         {
@@ -85,7 +110,7 @@ export default {
      .then(function (res) {
         if (res.ok) {
       const res = fetch('http://localhost:3000/api/post/all');
-      const data =  res.json();
+      const data = res.json();
       this.messages = data;
     
         }
@@ -93,6 +118,29 @@ export default {
     
     }
   },
+    createAComment() {
+        const postData = {
+          post_id: this.message.id,
+          user_id: this.user.user_id,
+          content: this.post.content
+          
+        };
+        console.log(postData);
+        fetch(
+          "http://localhost:3000/api/post/comment",
+          {
+            method: "POST",
+            headers: { 'Accept': 'application/json',
+                        'Content-Type': 'application/json'},
+            body: JSON.stringify(postData)
+          })
+      .then(function (res) {
+          if (res.ok) {
+            console.log("commentaire envoyé !!")
+          }
+      })
+      
+      }
 }
 </script>
 

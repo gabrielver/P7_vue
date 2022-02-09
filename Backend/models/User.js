@@ -3,7 +3,7 @@
 
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require('../mysql');
-
+const Post = require('../models/post');
 
 const users = sequelize.define('users', {
 
@@ -32,6 +32,26 @@ const users = sequelize.define('users', {
   tableName: 'users',
   timestamps: false
 });
+
+// const usersPost = sequelize.define('usersPost', {
+//   usersId: {
+//     type: DataTypes.INTEGER,
+//     references: {
+//       model: users, 
+//       key: 'user_id'
+//     }
+//   },
+//   PostId: {
+//     type: DataTypes.INTEGER,
+//     references: {
+//       model: Post, 
+//       key: 'user_id'
+//     }
+//   }
+// });
+// users.belongsToMany(Post, { through:  "usersPost" });
+// Post.belongsToMany(users, { through:  "usersPost" });
+
 
 // `sequelize.define` also returns the model
 console.log(users === sequelize.models.users); // true

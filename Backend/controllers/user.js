@@ -15,6 +15,7 @@ exports.signup = (req, res, next) => {
         password: hash
       })
         .then(() => res.status(201).json({ message: 'Utilisateur créé !', 
+        
         userId: users.user_id,
         token: jwt.sign(
           { userId: users.user_id },process.env.APP_KEY,
@@ -41,6 +42,7 @@ exports.signup = (req, res, next) => {
               return res.status(401).json({ error: 'Mot de passe incorrect !' });
             }
             res.status(200).json({
+                pseudo: users.pseudo,
                 userId: users.user_id,
                 token: jwt.sign(
                   { userId: users.user_id },process.env.APP_KEY,
@@ -51,4 +53,16 @@ exports.signup = (req, res, next) => {
           .catch(error => res.status(500).json({ error }));
       })
       .catch(error => res.status(500).json({ error }));
+  };
+
+  exports.userid =  (req, res, next) =>{
+    id = req.params.id;
+    users.findOne({where:{user_id : id}})
+    .then(users =>{
+    if (!users) {
+      console.log('Not found!');
+    } else {
+      res.status(200).json(users);
+    }
+  })
   };

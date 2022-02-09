@@ -12,19 +12,13 @@ const Post = sequelize.define('Post', {
   user_id: {
     type: DataTypes.STRING,
     allowNull: false
+    
   },
   content: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  createdAt: {
-    type: DataTypes.NUMBER,
-    allowNull: false
-  },
-  updatedAt: {
-    type: DataTypes.NUMBER,
-    allowNull: false
-  }
+  
   
 });
 
