@@ -23,19 +23,19 @@ const Comment = sequelize.define('Comment', {
   },
   likes: {
     type: DataTypes.STRING,
-    allowNull: false
+   
   },
   dislikes: {
     type: DataTypes.STRING,
-    allowNull: false
+ 
   },
   usersLiked: {
     type: DataTypes.STRING,
-    allowNull: false
+    
   },
   usersDisliked: {
     type: DataTypes.STRING,
-    allowNull: false
+    
   }
 
 });

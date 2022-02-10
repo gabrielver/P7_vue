@@ -19,26 +19,36 @@
         
       </header>
       <div class="message" v-for="message in messages" :key="message.id">
-            <div class="user_details">          
+            <div :class="`${message.id}`">          
                 <img src="" alt="">
                 <p>{{message.id}}</p> |
                 <p v-if="message.user_id === user.user_id">{{user.name}}</p>
            </div>
            <div class="message_details">
                 <p>{{message.content}}</p>
-                <button class="like">Like</button>
-                <span >0</span>
-                <button classe="dislike">Dislike</button>
-                <span >0</span>
+            </div>
+            <div class="like_dislike">
+               <div class="likes">
+                  <button class="like"  >Like</button>
+                  <span >0</span>
+                </div>
+                <div class="dislikes" style="display: flex">
+                  <button classe="dislike">Dislike</button>
+                  <span >0</span>
+                </div>
             </div>
             <div class="comment" id="user">
               <button @click="toggle = !toggle">commenter</button>
-            <form v-show="toggle" @submit.prevent="createAComment" class="typing-comment">
-                <input type="text" name="user_id" v-model="user.user_id" hidden >
+            <div v-show="toggle" class="typing-comment">
+
+                <textarea class="commentTexte" v-model="comment.message" rows="1" placeholder="What'up ?"></textarea>
+                <textarea id="post_id" v-model="message.id" hidden ></textarea>
+                <textarea class="commentTexte" v-model="user.user_id" hidden></textarea>
+                <!-- <input type="text" name="user_id" v-model="user.user_id" hidden >
                 <input type="text" name="post_id" v-model="message.id" hidden >
-                <input type="text" name="comment"  v-model="comment.message" class="input-comment" placeholder="Type a comment here..." autocomplete="off">
-                <button type="submit"  class="button">send it</button>
-                </form>
+                <input type="text" name="comment"  v-model="comment.message" class="input-comment" placeholder="Type a comment here..." autocomplete="off"> -->
+                <button @click="createAcomment"  class="button">send it</button>
+                </div>
             </div>        
       </div>
     
@@ -62,7 +72,9 @@ export default {
          
        }],
        post:{},
-       comment: {}
+       comment:[{
+         message:{}
+       }]
       
     };
   },
@@ -92,7 +104,7 @@ export default {
     },
     
 
-    createAPost() {
+     createAPost() {
       const postData = {
         userId: this.user.user_id,
         content: this.post.content
@@ -112,36 +124,33 @@ export default {
       const res = fetch('http://localhost:3000/api/post/all');
       const data = res.json();
       this.messages = data;
-    
         }
     })
-    
-    }
-  },
-    createAComment() {
-        const postData = {
-          post_id: this.message.id,
-          user_id: this.user.user_id,
-          content: this.post.content
-          
-        };
+    },
+  
+    createAcomment() {
+    const post_id = document.getElementById('post_id').value;
+    console.log(post_id);
+      const postData = {
+        post_Id: post_id,
+        user_Id: this.user.user_id,
+        message: this.comment.message
+      };
         console.log(postData);
-        fetch(
-          "http://localhost:3000/api/post/comment",
-          {
-            method: "POST",
-            headers: { 'Accept': 'application/json',
-                        'Content-Type': 'application/json'},
-            body: JSON.stringify(postData)
-          })
-      .then(function (res) {
-          if (res.ok) {
-            console.log("commentaire envoyé !!")
-          }
+      fetch("http://localhost:3000/api/post/comment",{
+        method: "POST",
+        headers: { 'Accept': 'application/json',
+        'Content-Type': 'application/json'},
+        body: JSON.stringify(postData)
       })
-      
-      }
-}
+      .then(function (res) {
+        if (res.ok) {
+          console.log("commentaire envoyé !!")
+        }
+      });
+    }
+}}
+
 </script>
 
 <style>
@@ -171,6 +180,25 @@ header .details{
     background: rgba(0, 204, 255, 0.616);
     margin: 1rem;
     border-radius: 17px;
+  
+}
+.like_dislike{
+  display: flex;
+}
+.likes, .dislikes{
+  scale: 80%;
+
+  background: lightgrey;
+  border-radius: 22px;
+  padding-right:0.5rem;
+  border: 1px solid;
+  pointer-events: auto;
+}
+.likes button, .dislikes button{
+  background: none;
+  border-radius: 22px;
+  margin-right: 0.25rem;
+  padding: 0rem 1rem;
 }
     .message .user_details{
         display: flex;
