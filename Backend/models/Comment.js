@@ -41,5 +41,5 @@ const Comment = sequelize.define('Comment', {
 });
 
 // `sequelize.define` also returns the model
-console.log(Comment === sequelize.models.Comment); // true
+console.log("4",Comment === sequelize.models.Comment); // true
 module.exports = Comment;

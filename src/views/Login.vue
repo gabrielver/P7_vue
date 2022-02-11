@@ -9,7 +9,6 @@
               <div class="field input">
                 <label>Email Address</label>
                 <input type="email"  id="email" v-model="post.email" placeholder="Enter your email" required>
-                <i class="fas fa-eye"></i>
               </div>
               <div class="field input">
                 <label>Password</label>
@@ -25,7 +24,7 @@
           <div class="link">Not yet signed up? <router-link :to="{name:'Signup'}" replace>Signup now</router-link></div>
         </section>
       </div>
-      <div>{{idx}}</div>
+      
         </div>
 </template>
 <script>

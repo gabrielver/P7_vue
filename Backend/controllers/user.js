@@ -16,9 +16,9 @@ exports.signup = (req, res, next) => {
       })
         .then(() => res.status(201).json({ message: 'Utilisateur créé !', 
         
-        userId: users.user_id,
+        userId: users.id,
         token: jwt.sign(
-          { userId: users.user_id },process.env.APP_KEY,
+          { userId: users.id },process.env.APP_KEY,
           { expiresIn: '24h' }
         ) }))
         .catch(error => res.status(400).json({ error }));
@@ -43,11 +43,12 @@ exports.signup = (req, res, next) => {
             }
             res.status(200).json({
                 pseudo: users.pseudo,
-                userId: users.user_id,
+                userId: users.id,
                 token: jwt.sign(
-                  { userId: users.user_id },process.env.APP_KEY,
+                  { userId: users.id },process.env.APP_KEY,
                   { expiresIn: '24h' }
-                )
+                ),
+                
               });
             })
           .catch(error => res.status(500).json({ error }));
@@ -55,9 +56,11 @@ exports.signup = (req, res, next) => {
       .catch(error => res.status(500).json({ error }));
   };
 
+
+
   exports.userid =  (req, res, next) =>{
     id = req.params.id;
-    users.findOne({where:{user_id : id}})
+    users.findOne({where:{id : id}})
     .then(users =>{
     if (!users) {
       console.log('Not found!');

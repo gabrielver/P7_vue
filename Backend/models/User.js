@@ -1,13 +1,11 @@
-
-
-
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require('../mysql');
 const Post = require('../models/post');
 
+
 const users = sequelize.define('users', {
 
-  user_id: {
+  id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true
@@ -30,29 +28,12 @@ const users = sequelize.define('users', {
   }
 }, {
   tableName: 'users',
-  timestamps: false
+    timestamps: false
 });
-
-// const usersPost = sequelize.define('usersPost', {
-//   usersId: {
-//     type: DataTypes.INTEGER,
-//     references: {
-//       model: users, 
-//       key: 'user_id'
-//     }
-//   },
-//   PostId: {
-//     type: DataTypes.INTEGER,
-//     references: {
-//       model: Post, 
-//       key: 'user_id'
-//     }
-//   }
-// });
-// users.belongsToMany(Post, { through:  "usersPost" });
-// Post.belongsToMany(users, { through:  "usersPost" });
+ 
+  users.hasMany(Post, {as: 'authors'});
 
 
 // `sequelize.define` also returns the model
-console.log(users === sequelize.models.users); // true
+console.log("1",users === sequelize.models.users), // true
 module.exports = users;

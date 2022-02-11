@@ -96,16 +96,16 @@ export default {
   font-family: "Poppins", sans-serif;
 }
 body {
-  display: flex;
+  
   align-items: center;
   justify-content: center;
   min-height: 100vh;
   background: #f7f7f7;
-  padding: 0 10px;
+  padding: 0 15%;
 }
 .wrapper {
   background: #fff;
-  max-width: 450px;
+
   width: 100%;
   border-radius: 16px;
   box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
@@ -204,6 +204,9 @@ body {
   display: flex;
   align-items: center;
   padding: 18px 30px;
+}
+.chat-area{
+  background: #e2e2e2;
 }
 .chat-area header .back-icon {
   color: #333;
