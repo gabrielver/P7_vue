@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
 import Signup from "@/views/Signup.vue";
-import About from "@/views/About.vue";
+import Comment from "@/views/Comment.vue";
 import Login from "@/views/Login.vue";
 import Profile from "@/views/Profile.vue";
 
@@ -14,11 +14,11 @@ const routes = [
             title: 'Signup'
           }
     }, {
-        name: "About",
-        path: "/about",
-        component: About,
+        name: "Comment",
+        path: "/Comment/:id",
+        component: Comment,
         meta: {
-            title: 'A propos'
+            title: 'Comment'
           }
     }, 
     {

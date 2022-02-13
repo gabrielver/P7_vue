@@ -2,7 +2,6 @@
 <div class="wrapper">
     <section class="chat-area">
       <header>
-        <div class="head">
         <div class="nav">
           <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a>
           <button>se deconnecter</button>
@@ -16,53 +15,80 @@
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
           </form>
         </div>
-        </div>
       </header>
       <div class="box">
-      <div class="message" v-for="message in messages" :key="message.id">
-        <div id="message_details" :class="`${message.id}`">          
-          <i class="fa-solid fa-user"></i>
-          <div class="info">
-            <p>{{message.users.name}}</p>
-            <span>{{message.createdAt}}</span>
+        <div class="message" v-bind:id="message.id" v-for="message in messages" :key="message.id">
+          <div id="message_details" >          
+            <i class="fa-solid fa-user"></i>
+            <div class="info">
+              <p>{{message.users.name}}</p>
+              <span>{{message.createdAt}}</span>
+            </div>
+          </div>
+          <div class="message_details">
+            <p>{{message.content}}</p>
+          </div>
+          <div class="like_dislike">
+            <div @click="liked()" class="likes">
+              <i class="fa-solid fa-thumbs-up"></i>
+              <span v-if="likes == 0">like </span>
+              <span v-else-if="likes == 1" >like {{likes}}</span>
+              <span v-else>like 0</span>
+            </div>
+            <div class="commenter">
+               <button v-on:click="addToCart(message) ,toggle = !toggle">
+                  <i class="fa-solid fa-comment"></i>
+                  <span>commentaires</span>
+               </button>
+              
+            </div> 
+            <!-- <div class="commenter"  @click="toggle = !toggle" id="user">
+              <i class="fa-solid fa-comment"></i>
+              <span>commentaires</span>
+            </div>  -->
+            <div @click="disliked()" class="dislikes">
+              <i class="fa-solid fa-thumbs-down"></i>
+              <span >dislike {{dislikes}}</span>
+            </div>
           </div>
         </div>
-        <div class="message_details">
-          <p>{{message.content}}</p>
-        </div>
-        <div class="like_dislike">
-          <div class="likes">
-            <i class="fa-solid fa-thumbs-up"></i>
-            <span >like</span>
-          </div>
-          <div class="commenter"  @click="toggle = !toggle" id="user">
-            <i class="fa-solid fa-comment"></i>
-            <span>commenter</span>
-          </div> 
-          <div class="dislikes">
-            <i class="fa-solid fa-thumbs-down"></i>
-             <span >dislike</span>
-          </div>
-        </div>
-        <!-- <div class="comment" id="user">
-          <button @click="toggle = !toggle">commenter</button> -->
-          <!-- <div v-show="toggle" :class="`${message.id}`"> -->
-          <!-- <textarea id="comment"></textarea> -->
-          <!-- <input type="text" :id="`${message.id}`" >
-          <label :for="`${message.id}`"></label>
-             <button type="submit" class="button">send it</button> -->
-          <!-- </div> -->
-        <!-- </div>         -->
-      </div>
       </div>
       <div v-show="toggle" id="commentaires" class="`${message.id}`">
         <i @click="toggle = !toggle" class="fa-solid fa-circle-xmark"></i>
+        <p> laisser un Commentaire</p>
         <form class="form" method="POST" @submit.prevent="createAcomment" >
           <textarea id="comment" placeholder="Pour commenter, c'est ici que ça se passe!"></textarea>
-          <input type="hidden" name="user_id" value="{{user.user_id}}" hidden >
-          <input type="hidden" id="post_id" value="{{message.id}}" hidden >
+          <input type="hidden" name="user_id"  value="{{user.user_id}}" hidden >
+          <input type="hidden"  id="messagesId" value="{{message.id}}" hidden >
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
+        <div class="commentairePoster">
+          <p>Commentaire sur le post ...{{cart.id}} de ...{{cart.name}}</p>
+      
+      <div class="message" v-for="comment in comments" :key="comment.id">
+        <div id="message_details" >          
+          <i class="fa-solid fa-user"></i>
+          <div class="info">
+            <p>{{comment.users.name}}</p>
+            <span>{{comment.createdAt}}</span>
+          </div>
+        </div>
+        <div class="message_details">
+          <p>{{comment.message}}</p>
+        </div>
+        <div class="like_dislike">
+          <div @click="liked()" class="likes" >
+            <i class="fa-solid fa-thumbs-up"></i>
+            <span >like {{likes}}</span>
+          </div>
+          <div class="dislikes" @click="disliked()" >        
+            <i class="fa-solid fa-thumbs-down"></i>
+             <span >dislike {{dislikes}}</span>
+          </div>
+        </div>
+      
+      </div>
+        </div>
       </div>
     </section>
   </div>
@@ -83,29 +109,72 @@ export default {
            }
        }],
        user:[{
+       
          user_id: {},
          name: {},
          
        }],
        post:{},
        comment:[{
-         message:{}
-       }]
-      
+           id:{},
+         message:{},
+         users:{
+             name:{}
+           }
+       }],
+       props: {
+         msg: {}
+       },
+       likes: 0,
+       dislikes: 0,
+       cart:[]
     };
   },
    beforeMount(){
     this.getMessage();
     this.getUser();
+    
   },
   methods: {
+    addToCart(message){
+      console.log(message.userId);
+      this.cart.id = message.id,
+      this.cart.user_id = message.userId,
+      this.cart.name = message.users.name
+      
+       this.getComment()
+
+      const messageId = message.id
+      console.log("id =", messageId);  
+    },
+
+    leaveAComment(){
+      const self = this;
+      const messageId = document.getElementById('message');
+
+      console.log("id =",messageId);
+      self.$router.push({ name: 'Comment', params: {id : messageId} });
+    },
+
+    liked: function(){
+      this.likes++
+    },
+    disliked: function(){
+      this.dislikes++
+    },
    
      async getMessage(){
       const res = await fetch('http://localhost:3000/api/post/all');
       const data = await res.json();
       this.messages = data;
-      console.log("data=",data)
-    },
+      console.log("message=",data)
+    }, 
+     async getComment(){
+      const res = await fetch('http://localhost:3000/api/post/comment/all');
+      const data2 = await res.json();
+      this.comments = data2;
+      console.log("comment=",data2)
+    }, 
 
     async getUser(){
       var pageURL = window.location.href;
@@ -116,7 +185,7 @@ export default {
       const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
       const data1 = await res1.json();
       this.user = data1;
-      console.log(data1);
+      console.log("users:",data1);
     },
     
 
@@ -146,13 +215,14 @@ export default {
   
     createAcomment() {
     const comment = document.getElementById('comment').value;
-    const postid = document.getElementById('post_id').value;
+  
     console.log(comment);
       const postData = {
-        post_Id: postid,
-        user_Id: this.user.id,
+        post_Id: this.cart.id,
+        userId: this.user.id,
         message: comment
       };
+      
         console.log(postData);
       fetch("http://localhost:3000/api/post/comment",{
         method: "POST",
@@ -177,20 +247,15 @@ header{
     flex-direction: column;
     border-radius: 17px;
      background: white;
-     top: 0;
-     left: 50%;
-     margin-left: -30%;
     
+     width: 100%;
+     
+      top: 6%;
+      left: 50%;
+      transform: translate(-50%, -50%);
      
 }
-.head{
- border-radius: 17px;
-     background: white;
-  padding: 0 75%;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  
-}
+
 header .nav{
   display: flex;
   justify-content: space-around;
@@ -332,10 +397,10 @@ align-items: center;
         align-content: center;
     }
     #commentaires{
-      
-      position: fixed;
-      top: 50%;
+      position: absolute;
+      top: 70%;
       left: 50%;
+      height: 100%;
       transform: translate(-50%, -50%);
       background: white;
     
@@ -344,6 +409,7 @@ align-items: center;
     border-radius: 17px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     }
+   
     #commentaire form{
       display: flex;
       flex-direction: row;
@@ -371,5 +437,9 @@ align-items: center;
     border-radius: 17px;
     outline: none;
     padding: 0.5rem;
+    }
+    .commentairePoster{
+      border-top: 1px solid;
+      border-radius: 17px 17px 0px 0px;
     }
 </style>

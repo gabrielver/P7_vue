@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require('../mysql');
 const Post = require('../models/post');
+const Comment = require('../models/Comment');
 
 
 const users = sequelize.define('users', {
@@ -32,6 +33,7 @@ const users = sequelize.define('users', {
 });
  
   users.hasMany(Post, {as: 'authors'});
+  users.hasMany(Comment, {as: 'authorsofComment'});
 
 
 // `sequelize.define` also returns the model

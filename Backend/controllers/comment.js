@@ -3,10 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 var asyncLib = require('async');
 require('dotenv').config({path:'./.env'}); 
-
+const users = require('../models/User');
 
 exports.getAllComment = async (req, res, next) => {
-    const comments = await Comment.findAll({
+    // const postId = req.body.post_Id;
+    const comments = await Comment.findAll({include: 'users',
         order : [['id', 'DESC']]
     });
     return res.status(200).json(comments);
@@ -19,7 +20,7 @@ exports.createComment = (req, res ,next) => {
     console.log(date)
     const comment =  Comment.create({
         post_id: req.body.post_Id,
-        user_id: req.body.user_Id,
+        userId: req.body.userId,
         message: req.body.message       
              // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     })
