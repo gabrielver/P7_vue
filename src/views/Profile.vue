@@ -40,7 +40,6 @@
                   <i class="fa-solid fa-comment"></i>
                   <span>commentaires</span>
                </button>
-              
             </div> 
             <!-- <div class="commenter"  @click="toggle = !toggle" id="user">
               <i class="fa-solid fa-comment"></i>
@@ -90,12 +89,20 @@
       </div>
         </div>
       </div>
+      <div class="container">
+              <h1>this is a modal</h1>
+              <modale></modale>
+            </div>
     </section>
   </div>
   </template>
 <script>
+import Comment from './Comment'
 export default {
   name: "#user",
+  componant: {
+    'comment': Comment
+  },
   data() {
     return {
       commentaire: [],
@@ -137,24 +144,27 @@ export default {
   },
   methods: {
     addToCart(message){
-      console.log(message.userId);
       this.cart.id = message.id,
       this.cart.user_id = message.userId,
       this.cart.name = message.users.name
+    
+       var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      console.log(lastURLSegment);
+      let id = lastURLSegment; 
+      const messageId = message.id  
+      const self = this;
       
-       this.getComment()
-
-      const messageId = message.id
-      console.log("id =", messageId);  
+      self.$router.push({name: 'Comment', params: {id: id, postId : messageId} });
     },
 
-    leaveAComment(){
-      const self = this;
+    /*leaveAComment(){
+      
       const messageId = document.getElementById('message');
 
       console.log("id =",messageId);
-      self.$router.push({ name: 'Comment', params: {id : messageId} });
-    },
+      
+    },*/
 
     liked: function(){
       this.likes++
@@ -169,12 +179,27 @@ export default {
       this.messages = data;
       console.log("message=",data)
     }, 
-     async getComment(){
+    getComment() {
+      const postData = {postId: this.cart.id};
+      console.log(postData);
+      fetch(
+        "http://localhost:3000/api/post/comment/getsome",
+        {method: "POST",
+          headers: { 'Accept': 'application/json',
+                      'Content-Type': 'application/json'},
+          body: JSON.stringify(postData)})
+     .then(function (res) {
+        if (res.ok) { const data = res.json();
+      this.comment = data;}
+    })
+
+    },
+     /*async getComment(){
       const res = await fetch('http://localhost:3000/api/post/comment/all');
       const data2 = await res.json();
       this.comments = data2;
       console.log("comment=",data2)
-    }, 
+    }, */
 
     async getUser(){
       var pageURL = window.location.href;

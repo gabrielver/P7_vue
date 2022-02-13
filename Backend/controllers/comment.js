@@ -5,12 +5,31 @@ var asyncLib = require('async');
 require('dotenv').config({path:'./.env'}); 
 const users = require('../models/User');
 
-exports.getAllComment = async (req, res, next) => {
-    // const postId = req.body.post_Id;
-    const comments = await Comment.findAll({include: 'users',
+// exports.getAllComment = async (req, res, next) => {
+//     // const postId = req.body.post_Id;
+//     const comments = await Comment.findAll({include: 'users',
+//         order : [['id', 'DESC']]
+//     });
+//     return res.status(200).json(comments);
+// };
+exports.getSomeComment = async (req, res, next) => {
+    const postId = req.body.postId;
+    Comment.findAll({ where: {post_id: postId }, include: 'users',
         order : [['id', 'DESC']]
-    });
-    return res.status(200).json(comments);
+    })
+    .then((comment) => {
+        if (!comment) {
+          return res.status(404).send(new Error('Product not found!'));
+        }
+        //product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
+        res.status(200).json(comment);
+      }
+    ).catch(
+      () => {
+        res.status(500).send(new Error('Database error!'));
+      }
+    )
+  
 };
 
 exports.createComment = (req, res ,next) => {

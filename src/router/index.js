@@ -15,7 +15,7 @@ const routes = [
           }
     }, {
         name: "Comment",
-        path: "/Comment/:id",
+        path: "/profile/:id/Comment/:postId",
         component: Comment,
         meta: {
             title: 'Comment'

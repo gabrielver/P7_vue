@@ -5,22 +5,9 @@ require('dotenv').config({path:'./.env'});
 
 
 exports.getAllPost = async (req, res, next) => {
-    // const posts = await Post.findAll({
-    //     order : [['id', 'DESC']],
-    //     include: 'users'
-       
-    //     // include: users
-    // })
-    // return res.status(200).json(posts),
     const post = await Post.findAll({ include: 'users', order : [['id', 'DESC']]
     })
     return res.status(200).json(post);
-    
-      // Get the User with Company datas included
-      //console.log('1:',(JSON.stringify(post, null, 2)));
-      // Get the company record only
-      // console.log(findedUser.company)
-    
 };
 
 exports.createPost = (req, res ,next) => {
