@@ -35,9 +35,10 @@
                 name="checkbox"
                 v-bind:id="message.id"
                 v-model="likes"
-                @click="setLikes()"/>
+                @click="setLikes(message.id)"/>
                 <label v-bind:for="message.id">
                   <i class="fa-solid fa-thumbs-up"></i>
+                  
                 </label>
               </div>
             <!-- <div @click="liked()" class="likes">
@@ -69,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div v-show="toggle" id="commentaires" class="`${message.id}`">
+      <!-- <div v-show="toggle" id="commentaires" class="`${message.id}`">
         <i @click="toggle = !toggle" class="fa-solid fa-circle-xmark"></i>
         <p> laisser un Commentaire</p>
         <form class="form" method="POST" @submit.prevent="createAcomment" >
@@ -105,16 +106,12 @@
       
       </div>
         </div>
-      </div>
-      <div class="container">
-              <h1>this is a modal</h1>
-              <modale></modale>
-            </div>
+      </div> -->
     </section>
   </div>
   </template>
 <script>
-import Comment from './Comment'
+
 export default {
   name: "#user",
   componant: {
@@ -122,6 +119,8 @@ export default {
   },
   data() {
     return {
+       isActive: false,
+       
       commentaire: [],
       toggle : false,
        messages: [ {
@@ -150,7 +149,7 @@ export default {
          msg: {}
        },
        likes: [],
-       dislikes: 0,
+       dislikes: [],
        cart:[]
     };
   },
@@ -160,8 +159,24 @@ export default {
     
   },
   methods: {
-    setLikes(){
-      console.log(this.likes)
+    setLikes(id){
+      console.log(JSON.stringify(this.likes));
+      const postData = {
+        post_id: id,
+        user_id: this.user.id
+      }
+      console.log(postData);
+
+
+      /*fetch( "http://localhost:3000/api/post/comment/getsome",
+        {method: "POST",
+          headers: { 'Accept': 'application/json',
+                      'Content-Type': 'application/json'},
+          body: JSON.stringify(postData)})
+     .then(function (res) {
+        if (res.ok) { const data = res.json();
+      this.comment = data;}
+    })*/
     },
 
     addToCart(message){
@@ -185,7 +200,7 @@ export default {
       this.messages = data;
       console.log("message=",data)
     }, 
-    getComment() {
+    /*getComment() {
       const postData = {postId: this.cart.id};
       console.log(postData);
       fetch(
@@ -200,7 +215,7 @@ export default {
     })
 
     },
-     /*async getComment(){
+     async getComment(){
        const id = this.cart.id;
        console.log("id = ", id);
       const res = await fetch('http://localhost:3000/api/post/comment/all/' +id);

@@ -16,7 +16,7 @@
         <div id="message_details" :class="`${comment.id}`">          
           <i class="fa-solid fa-user"></i>
           <div class="info">
-            <p>{{comment.post_id}}</p>
+            <p>{{comment.id}}</p>
             <p>{{comment.users.name}}</p>
             <span>{{comment.createdAt}}</span>
           </div>
@@ -25,10 +25,21 @@
           <p>{{comment.message}}</p>
         </div>
         <div class="like_dislike">
-          <div @click="liked()" class="likes" >
+          <div class="likes">
+                <input type="checkbox"
+                :value=comment.id
+                v-model="likes"
+                name="checkbox"
+                v-bind:id="comment.id"
+                @click="Liked()"/>
+                <label v-bind:for="comment.id">
+                  <i class="fa-solid fa-thumbs-up">{{likes}}</i>
+                </label>
+              </div>
+          <!-- <div @click="liked()" class="likes" >
             <i class="fa-solid fa-thumbs-up"></i>
             <span >like {{likes}}</span>
-          </div>
+          </div> -->
           <div class="dislikes" @click="disliked()" >        
             <i class="fa-solid fa-thumbs-down"></i>
              <span >dislike {{dislikes}}</span>
@@ -84,10 +95,10 @@ export default {
   },
   methods: {
     liked: function(){
-      this.likes++
+      this.likes + 1
     },
     disliked: function(){
-      this.dislikes++
+      this.dislikes - 1
     
     }, 
     
