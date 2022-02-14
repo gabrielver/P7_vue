@@ -63,7 +63,7 @@ export default {
          
        }],
        post:{},
-       comment:[{
+       comments:[{
            id:{},
          message:{},
          users:{
@@ -79,7 +79,7 @@ export default {
   },
    beforeMount(){
   
-    this.getUser();
+    /*this.getUser();*/
     this.getComment();
   },
   methods: {
@@ -90,14 +90,21 @@ export default {
       this.dislikes++
     
     }, 
-    async getComment(){
-      const res2 = await fetch('http://localhost:3000/api/post/comment/all');
-      const data2 = await res2.json();
+    
+     async getComment(){
+       var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      console.log(lastURLSegment);
+      let id = lastURLSegment;  
+      console.log(id)
+      const res = await fetch('http://localhost:3000/api/post/comment/all/' + id);
+      const data2 = await res.json();
       this.comments = data2;
       console.log("comment=",data2)
+    
     }, 
 
-    async getUser(){
+    /*async getUser(){
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       console.log(lastURLSegment);
@@ -107,7 +114,7 @@ export default {
       const data1 = await res1.json();
       this.user = data1;
       console.log("users:",data1);
-    },
+    },*/
     
     createAcomment() {
     const comment = document.getElementById('comment').value;

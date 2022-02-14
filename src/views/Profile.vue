@@ -17,7 +17,7 @@
         </div>
       </header>
       <div class="box">
-        <div class="message" v-bind:id="message.id" v-for="message in messages" :key="message.id">
+        <div class="message"  v-for="message in messages" :key="message.id">
           <div id="message_details" >          
             <i class="fa-solid fa-user"></i>
             <div class="info">
@@ -29,12 +29,23 @@
             <p>{{message.content}}</p>
           </div>
           <div class="like_dislike">
-            <div @click="liked()" class="likes">
+              <div class="likes">
+                <input type="checkbox"
+                :value=message.id
+                name="checkbox"
+                v-bind:id="message.id"
+                v-model="likes"
+                @click="setLikes()"/>
+                <label v-bind:for="message.id">
+                  <i class="fa-solid fa-thumbs-up"></i>
+                </label>
+              </div>
+            <!-- <div @click="liked()" class="likes">
               <i class="fa-solid fa-thumbs-up"></i>
               <span v-if="likes == 0">like </span>
               <span v-else-if="likes == 1" >like {{likes}}</span>
-              <span v-else>like 0</span>
-            </div>
+              <span v-else>like 0</span> -->
+            <!-- </div> -->
             <div class="commenter">
                <button v-on:click="addToCart(message) ,toggle = !toggle">
                   <i class="fa-solid fa-comment"></i>
@@ -45,10 +56,16 @@
               <i class="fa-solid fa-comment"></i>
               <span>commentaires</span>
             </div>  -->
-            <div @click="disliked()" class="dislikes">
+            <div class="dislikes">
+                <input type="checkbox" name="checkbox2"  v-bind:id="message.content"/>
+                <label v-bind:for="message.content">
+                  <i class="fa-solid fa-thumbs-down"></i>
+                </label>
+              </div>
+            <!-- <div @click="disliked()" class="dislikes">
               <i class="fa-solid fa-thumbs-down"></i>
               <span >dislike {{dislikes}}</span>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -132,7 +149,7 @@ export default {
        props: {
          msg: {}
        },
-       likes: 0,
+       likes: [],
        dislikes: 0,
        cart:[]
     };
@@ -143,6 +160,10 @@ export default {
     
   },
   methods: {
+    setLikes(){
+      console.log(this.likes)
+    },
+
     addToCart(message){
       this.cart.id = message.id,
       this.cart.user_id = message.userId,
@@ -156,21 +177,6 @@ export default {
       const self = this;
       
       self.$router.push({name: 'Comment', params: {id: id, postId : messageId} });
-    },
-
-    /*leaveAComment(){
-      
-      const messageId = document.getElementById('message');
-
-      console.log("id =",messageId);
-      
-    },*/
-
-    liked: function(){
-      this.likes++
-    },
-    disliked: function(){
-      this.dislikes++
     },
    
      async getMessage(){
@@ -195,7 +201,9 @@ export default {
 
     },
      /*async getComment(){
-      const res = await fetch('http://localhost:3000/api/post/comment/all');
+       const id = this.cart.id;
+       console.log("id = ", id);
+      const res = await fetch('http://localhost:3000/api/post/comment/all/' +id);
       const data2 = await res.json();
       this.comments = data2;
       console.log("comment=",data2)
@@ -415,7 +423,24 @@ align-items: center;
  cursor: pointer;
  
 }
+.likes i, .dislikes i {
+  padding: 3px 5px;
+  transition: 0.2s;
+  cursor: pointer;
+}
+.likes i:hover, .dislikes i:hover{
+  animation: scaler 0.8s infinite linear;
+}
+.fa-thumbs-up:hover, .fa-thumbs-down:hover {
+            color: rgba(38, 77, 251, 0.5);
+          }
+.likes input, .dislikes input {
+              display: none;
+}
 
+ input:checked + label i {
+                color: rgb(0, 41, 221);
+                }
     .message .user_details{
         display: flex;
         justify-content: flex-start;

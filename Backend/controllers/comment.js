@@ -13,24 +13,18 @@ const users = require('../models/User');
 //     return res.status(200).json(comments);
 // };
 exports.getSomeComment = async (req, res, next) => {
-    const postId = req.body.postId;
-    Comment.findAll({ where: {post_id: postId }, include: 'users',
+  id = req.params.id;
+    Comment.findAll({ where: {post_id: id }, include: 'users',
         order : [['id', 'DESC']]
     })
-    .then((comment) => {
-        if (!comment) {
-          return res.status(404).send(new Error('Product not found!'));
-        }
-        //product.imageUrl = req.protocol + '://' + req.get('host') + '/images/' + product.imageUrl;
-        res.status(200).json(comment);
+    .then(Comment =>{
+      if (!Comment) {
+        console.log('Not found!');
+      } else {
+        res.status(200).json(Comment);
       }
-    ).catch(
-      () => {
-        res.status(500).send(new Error('Database error!'));
-      }
-    )
-  
-};
+    })
+    };
 
 exports.createComment = (req, res ,next) => {
     delete req.body.user_id;
