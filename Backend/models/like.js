@@ -5,25 +5,36 @@ const users = require('../models/User');
 
     const Likes = sequelize.define('likes', {
       id: {
-        type: DataTypes.INTEGER,
+        allowNull: false,
         autoIncrement: true,
-        primaryKey: true
+        primaryKey: true,
+        type: Sequelize.INTEGER
       },
-      likes: {
-        type: DataTypes.INTEGER,
-        
+      postId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {         // User hasMany WorkingDays n:n
+          model: Post,
+          key: 'id'
+        }
       },
-      dislikes: {
-        type: DataTypes.INTEGER,
-       
-      },
-   
-    });
+      userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {         // WorkingDays hasMany Users n:n
+          model: users,
+          key: 'id'
+        }
+    }
+  });
 
     console.log("post in likes=",Post);
     console.log("users in likes=",users);
     
-    Likes.belongsToMany(model.Post, {through: 'PostLikes', foreignKey: 'PostLikesId', as: 'authors'});
+    users.belongsToMany(Post, { through: Likes, foreignKey: 'userId', otherkey: "postId"});
+    Post.belongsToMany(users, { through: Likes, foreignKey: 'postId', otherkey: "userId"});
+    Likes.belongsTo(users, { foreignKey: 'userId', as: "user"});
+    Likes.belongsTo(Post, { foreignKey: 'postId', as: "post"});
   
     
     console.log("5",Likes === sequelize.models.likes), // true

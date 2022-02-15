@@ -160,23 +160,22 @@ export default {
   },
   methods: {
     setLikes(id){
-      console.log(JSON.stringify(this.likes));
       const postData = {
-        post_id: id,
-        user_id: this.user.id
+        postId: id,
+        userId: this.user.id
       }
       console.log(postData);
 
 
-      /*fetch( "http://localhost:3000/api/post/comment/getsome",
+      fetch( "http://localhost:3000/api/post/like",
         {method: "POST",
           headers: { 'Accept': 'application/json',
                       'Content-Type': 'application/json'},
           body: JSON.stringify(postData)})
      .then(function (res) {
         if (res.ok) { const data = res.json();
-      this.comment = data;}
-    })*/
+      console.log(data)
+    }})
     },
 
     addToCart(message){
@@ -186,11 +185,11 @@ export default {
     
        var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-      console.log(lastURLSegment);
+
       let id = lastURLSegment; 
       const messageId = message.id  
+
       const self = this;
-      
       self.$router.push({name: 'Comment', params: {id: id, postId : messageId} });
     },
    
@@ -198,11 +197,9 @@ export default {
       const res = await fetch('http://localhost:3000/api/post/all');
       const data = await res.json();
       this.messages = data;
-      console.log("message=",data)
     }, 
     /*getComment() {
       const postData = {postId: this.cart.id};
-      console.log(postData);
       fetch(
         "http://localhost:3000/api/post/comment/getsome",
         {method: "POST",
@@ -216,20 +213,16 @@ export default {
 
     },
      async getComment(){
-       const id = this.cart.id;
-       console.log("id = ", id);
+      const id = this.cart.id;
       const res = await fetch('http://localhost:3000/api/post/comment/all/' +id);
       const data2 = await res.json();
       this.comments = data2;
-      console.log("comment=",data2)
     }, */
 
     async getUser(){
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-      console.log(lastURLSegment);
       let id = lastURLSegment;  
-      console.log(id)
       const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
       const data1 = await res1.json();
       this.user = data1;
@@ -240,10 +233,8 @@ export default {
      createAPost() {
       const postData = {
         userId: this.user.id,
-        content: this.post.content
-        
+        content: this.post.content  
       };
-      console.log(postData);
       fetch(
         "http://localhost:3000/api/post",
         {
@@ -263,15 +254,11 @@ export default {
   
     createAcomment() {
     const comment = document.getElementById('comment').value;
-  
-    console.log(comment);
       const postData = {
         post_Id: this.cart.id,
         userId: this.user.id,
         message: comment
       };
-      
-        console.log(postData);
       fetch("http://localhost:3000/api/post/comment",{
         method: "POST",
         headers: { 'Accept': 'application/json',
@@ -437,6 +424,12 @@ align-items: center;
  display: flex;
  cursor: pointer;
  
+}
+.commenter button{
+  border: none;
+  background: none;
+  color: grey;
+  cursor: pointer;
 }
 .likes i, .dislikes i {
   padding: 3px 5px;

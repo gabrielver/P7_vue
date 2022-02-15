@@ -10,7 +10,7 @@
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
         <div class="commentairePoster">
-          <p>Commentaire sur le post de ...</p>
+          <p id="noComm">Commentaire sur le post</p>
            <div class="box-comm">
       <div class="message" v-for="comment in comments" :key="comment.id">
         <div id="message_details" :class="`${comment.id}`">          
@@ -92,6 +92,7 @@ export default {
   
     /*this.getUser();*/
     this.getComment();
+    /*this.getUser();*/
   },
   methods: {
     liked: function(){
@@ -101,23 +102,23 @@ export default {
       this.dislikes - 1
     
     }, 
-    
      async getComment(){
        var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-      console.log(lastURLSegment);
       let id = lastURLSegment;  
-      console.log(id)
       const res = await fetch('http://localhost:3000/api/post/comment/all/' + id);
       const data2 = await res.json();
       this.comments = data2;
-      console.log("comment=",data2)
-    
-    }, 
+      if(data2 == ""){
+        const noComm = document.getElementById('noComm');
+        noComm.innerHTML= "Il n'y a pas encore de commentaires sur ce post ..."; 
+      }
+    },
 
+    
     /*async getUser(){
       var pageURL = window.location.href;
-      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      var lastURLSegment = pageURL.substr(pageURL.indexOf('profile')+1);
       console.log(lastURLSegment);
       let id = lastURLSegment;  
       console.log(id)
@@ -128,12 +129,14 @@ export default {
     },*/
     
     createAcomment() {
-    const comment = document.getElementById('comment').value;
-    const postid = document.getElementById('post_id').value;
-    console.log(comment);
+       var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let postId = lastURLSegment;  
+      const comment = document.getElementById('comment').value;
+   
       const postData = {
-        post_Id: postid,
-        userId: this.user.id,
+        post_Id: postId,
+        userId: this.user.user_id,
         message: comment
       };
       
