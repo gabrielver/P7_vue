@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const users = require('../models/User');
+const Likes = require('../models/like');
 var asyncLib = require('async');
 require('dotenv').config({path:'./.env'}); 
 
@@ -60,11 +61,11 @@ exports.signup = (req, res, next) => {
 
   exports.userid =  (req, res, next) =>{
     id = req.params.id;
-    users.findOne({where:{id : id}})
+    users.findOne({ where:{id : id}, include: 'likes'})
     .then(users =>{
     if (!users) {
       console.log('Not found!');
-    } else {
+    } else { 
       res.status(200).json(users);
     }
   })

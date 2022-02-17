@@ -3,7 +3,11 @@
     <section class="chat-area">
       <header>
         <div class="nav">
+         
           <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a>
+          <div   v-for="like in likes " :key="like.id">
+                   <p id="posdtId">{{like.postId}} |</p>
+                 </div>
           <button>se deconnecter</button>
         </div>
         <div class="details">
@@ -18,7 +22,8 @@
       </header>
       <div class="box">
         <div class="message"  v-for="message in messages" :key="message.id">
-          <div id="message_details" >          
+          
+          <div id="message_details" :class="`${message.id}`">          
             <i class="fa-solid fa-user"></i>
             <div class="info">
               <p>{{message.users.name}}</p>
@@ -29,26 +34,30 @@
             <p>{{message.content}}</p>
           </div>
           <div class="like_dislike">
-              <div class="likes">
+              <!-- <div class="likes">
                 <input type="checkbox"
+                class="like_btn"
                 :value=message.id
                 name="checkbox"
                 v-bind:id="message.id"
-                v-model="likes"
-                @click="setLikes(message.id)"/>
-                <label v-bind:for="message.id">
-                  <i class="fa-solid fa-thumbs-up"></i>
-                  
-                </label>
-              </div>
-            <!-- <div @click="liked()" class="likes">
-              <i class="fa-solid fa-thumbs-up"></i>
-              <span v-if="likes == 0">like </span>
-              <span v-else-if="likes == 1" >like {{likes}}</span>
-              <span v-else>like 0</span> -->
-            <!-- </div> -->
+                active
+                @click=" displayLikes(message)"/>
+                <label class="icon" v-bind:for="message.id">
+                  <i class="far fa-thumbs-up" ></i>
+                  <p>{{message.likes}}</p>
+                </label>   
+              </div> -->
+            <div class="like"
+                :value=message.id
+                name="checkbox"
+                v-bind="message.id" >
+              <button @click="displayLikes(message)" class="like_btn"  :class="`${message.id}`">
+                <label  ><i id="icon" class="far fa-thumbs-up"></i></label>
+                 
+              </button>
+            </div>
             <div class="commenter">
-               <button v-on:click="addToCart(message) ,toggle = !toggle">
+               <button v-on:click="goToComment(message) ,toggle = !toggle">
                   <i class="fa-solid fa-comment"></i>
                   <span>commentaires</span>
                </button>
@@ -60,7 +69,8 @@
             <div class="dislikes">
                 <input type="checkbox" name="checkbox2"  v-bind:id="message.content"/>
                 <label v-bind:for="message.content">
-                  <i class="fa-solid fa-thumbs-down"></i>
+                  <i  class="fa-solid fa-thumbs-down"></i>
+                 
                 </label>
               </div>
             <!-- <div @click="disliked()" class="dislikes">
@@ -114,16 +124,10 @@
 
 export default {
   name: "#user",
-  componant: {
-    'comment': Comment
-  },
   data() {
     return {
-       isActive: false,
-       
       commentaire: [],
-      toggle : false,
-       messages: [ {
+      messages: [ {
            id: {},
            user_id: {},
            content: {},
@@ -132,23 +136,15 @@ export default {
            }
        }],
        user:[{
-       
          user_id: {},
          name: {},
-         
+         likes:[{}]
        }],
        post:{},
-       comment:[{
-           id:{},
-         message:{},
-         users:{
-             name:{}
-           }
-       }],
        props: {
          msg: {}
        },
-       likes: [],
+       likes: {},
        dislikes: [],
        cart:[]
     };
@@ -156,36 +152,18 @@ export default {
    beforeMount(){
     this.getMessage();
     this.getUser();
+     this.getLikes();
     
   },
   methods: {
-    setLikes(id){
-      const postData = {
-        postId: id,
-        userId: this.user.id
-      }
-      console.log(postData);
 
-
-      fetch( "http://localhost:3000/api/post/like",
-        {method: "POST",
-          headers: { 'Accept': 'application/json',
-                      'Content-Type': 'application/json'},
-          body: JSON.stringify(postData)})
-     .then(function (res) {
-        if (res.ok) { const data = res.json();
-      console.log(data)
-    }})
-    },
-
-    addToCart(message){
+    goToComment(message){
       this.cart.id = message.id,
       this.cart.user_id = message.userId,
       this.cart.name = message.users.name
     
-       var pageURL = window.location.href;
+      var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-
       let id = lastURLSegment; 
       const messageId = message.id  
 
@@ -197,7 +175,10 @@ export default {
       const res = await fetch('http://localhost:3000/api/post/all');
       const data = await res.json();
       this.messages = data;
+      console.log("data",data);
     }, 
+
+  /*  //////////////////////////////////////////////////////
     /*getComment() {
       const postData = {postId: this.cart.id};
       fetch(
@@ -210,7 +191,7 @@ export default {
         if (res.ok) { const data = res.json();
       this.comment = data;}
     })
-
+    
     },
      async getComment(){
       const id = this.cart.id;
@@ -218,6 +199,7 @@ export default {
       const data2 = await res.json();
       this.comments = data2;
     }, */
+    /////////////////////////////////////////////////////////////////*/
 
     async getUser(){
       var pageURL = window.location.href;
@@ -226,10 +208,63 @@ export default {
       const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
       const data1 = await res1.json();
       this.user = data1;
-      console.log("users:",data1);
-    },
-    
+      console.log("user:",data1);
 
+     
+    },
+   
+    
+    ////////////////////////////////////////////////////////////////
+
+    async getLikes(){
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let id = lastURLSegment;  
+      const res = await fetch('http://localhost:3000/api/post/like/' + id);
+      const data =  await res.json();
+      this.likes = data;
+      console.log("likes:",data);
+
+      
+
+    },
+
+   setLikes(id){
+      const postData = {
+        postId: id,
+        userId: this.user.id
+      }
+      console.log(postData);
+
+
+      /*fetch( "http://localhost:3000/api/post/like",
+        {method: "POST",
+          headers: { 'Accept': 'application/json',
+                      'Content-Type': 'application/json'},
+          body: JSON.stringify(postData)})
+     .then(function (res) {
+        if (res.ok) { const data = res.json();
+      console.log(data)
+    }})*/
+    },
+
+     displayLikes(message){
+    const icon = document.querySelector('#icon').value;
+    console.log(icon);
+    const posdtId = document.getElementById('#posdtId');
+    
+    console.log("like =", posdtId);
+    const post =  message.id;
+    console.log("post =",post);
+      
+      if(posdtId.value == post ){
+        console.log("match");
+      }else{
+        console.log("pas match");
+      }
+      
+    },
+      //////////////////////////////////////////////////////////////////
      createAPost() {
       const postData = {
         userId: this.user.id,

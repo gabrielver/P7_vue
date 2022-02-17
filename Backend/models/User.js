@@ -1,8 +1,9 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require('../mysql');
+var validator = require('validator');
 const Post = require('../models/post');
 const Comment = require('../models/Comment');
-
+const Likes = require('../models/like');
 
 const users = sequelize.define('users', {
 
@@ -13,7 +14,7 @@ const users = sequelize.define('users', {
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   pseudo: {
     type: DataTypes.STRING,
@@ -21,12 +22,14 @@ const users = sequelize.define('users', {
   },
   email: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    unique: true
   },
   password: {
     type: DataTypes.STRING,
     allowNull: false
   }
+  
 }, {
   tableName: 'users',
     timestamps: false
@@ -34,8 +37,9 @@ const users = sequelize.define('users', {
  
   users.hasMany(Post, {as: 'authors'});
   users.hasMany(Comment, {as: 'authorsofComment'});
+  users.hasMany(Likes, {as: 'likes'});
 
-
+  console.log("like in user",Likes)
 // `sequelize.define` also returns the model
 console.log("1",users === sequelize.models.users), // true
 module.exports = users;

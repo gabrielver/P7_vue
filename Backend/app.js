@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+var validator = require('validator');
 require('dotenv').config({path:'./.env'}); 
 //datbase connection
 require("./mysql");

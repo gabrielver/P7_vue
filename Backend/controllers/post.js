@@ -12,6 +12,18 @@ exports.getAllPost = async (req, res, next) => {
     return res.status(200).json(post);
 };
 
+exports.getAllLikes = async (req, res, next) =>{
+    id = req.params.id;
+    Likes.findAll({ where:{userId : id}})
+    .then(likes =>{
+        if (!likes) {
+          console.log('Not found!');
+        } else { 
+          res.status(200).json(likes);
+        }
+      })
+};
+
 exports.createPost = (req, res ,next) => {
     delete req.body.user_id;
     const post =  Post.create({
@@ -63,101 +75,150 @@ exports.getOnePost = (req, res, next) => {
 };
 
 
-exports.likePost = (req, res, next) => {
+exports.likePost = async (req, res, next) => {
     const userId = req.body.userId;
     const postId = req.body.postId;
-    if(postId <= 0){
-        return res.status(400).json({ 'error': 'invalid parameters'})
+    const mode = req.body.mode; //1 like, 0 unlike
+
+    const post = await Post.findOne({where: {id: postId}});
+    if(post === null)
+    {
+        res.status(404).json({message: 'Post not found'})
+        return;
     }
-    asyncLib.waterfall([
-        function(done) {
-          Post.findOne({
-            where: { id: postId }
-          })
-          .then(function(messageFound) {
-            done(null, messageFound);
-          })
-          .catch(function(err) {
-            return res.status(500).json({ 'error': 'unable to verify message' });
-          });
-        },
-        function(messageFound, done) {
-          if(messageFound) {
-            users.findOne({
-              where: { id: userId }
-            })
-            .then(function(userFound) {
-              done(null, messageFound, userFound);
-            })
-            .catch(function(err) {
-              return res.status(500).json({ 'error': 'unable to verify user' });
-            });
-          } else {
-            res.status(404).json({ 'error': 'post already liked' });
-          }
-        },
-        function(messageFound, userFound, done) {
-          if(userFound) {
-            Likes.findOne({
-              where: {
+
+    if (mode === 1) {
+        const like = await Likes.findOne({where: {postId: postId, userId: userId}})
+        if(like === null)
+        {
+            post.likes += 1;
+            post.save()
+
+            Likes.create({
                 postId: postId,
                 userId: userId
-              }
             })
-            .then(function(userAlreadyLikedFound) {
-              done(null, messageFound, userFound, userAlreadyLikedFound);
-            })
-            .catch(function() {
-                Likes.create({
-                    postId: postId,
-                    userId: userId
-                })
-            //   return res.status(500).json({ 'error': 'unable to verify is user already liked' });
-            });
-          } else {
-            res.status(404).json({ 'error': 'user not exist' });
-          }
-        },
-        function(messageFound, userFound, userAlreadyLikedFound, done) {
-          if(!userAlreadyLikedFound) {
-            messageFound.addUser(userFound, { isLike: LIKED })
-            .then(function (alreadyLikeFound) {
-              done(null, messageFound, userFound);
-            })
-            .catch(function(err) {
-              return res.status(500).json({ 'error': 'unable to set user reaction' });
-            });
-          } else {
-            if (userAlreadyLikedFound.isLike === DISLIKED) {
-              userAlreadyLikedFound.update({
-                isLike: LIKED,
-              }).then(function() {
-                done(null, messageFound, userFound);
-              }).catch(function(err) {
-                res.status(500).json({ 'error': 'cannot update user reaction' });
-              });
-            } else {
-              res.status(409).json({ 'error': 'message already liked' });
+
+            res.status(200).json({message: "like !"});
+            return;
+        }
+        else {
+            res.status(400).json({message: "deja like !"});
+            return;
+        }
+    }
+    if(mode === 0) {
+        post.likes -= 1;
+        post.save()
+
+        Likes.destroy({
+            where: {
+                postId: postId,
+                userId: userId
             }
-          }
-        },
-        function(messageFound, userFound, done) {
-            messageFound.update({
-              likes: messageFound.likes + 1,
-            }).then(function() {
-              done(messageFound);
-            }).catch(function(err) {
-              res.status(500).json({ 'error': 'cannot update message like counter' });
-            });
-          },
-        ], function(messageFound) {
-          if (messageFound) {
-            return res.status(201).json(messageFound);
-          } else {
-            return res.status(500).json({ 'error': 'cannot update message' });
-          }
-        });
-      }
+        })
+
+        res.status(200).json({message: "unlike !"});
+        return;
+    }
+
+    res.status(400).json({ });
+}
+// exports.likePost = (req, res, next) => {
+//     const userId = req.body.userId;
+//     const postId = req.body.postId;
+//     if(postId <= 0){
+//         return res.status(400).json({ 'error': 'invalid parameters'})
+//     }
+//     asyncLib.waterfall([
+//         function(done) {
+//           Post.findOne({
+//             where: { id: postId }
+//           })
+//           .then(function(messageFound) {
+//             done(null, messageFound);
+//           })
+//           .catch(function(err) {
+//             return res.status(500).json({ 'error': 'unable to verify message' });
+//           });
+//         },
+//         function(messageFound, done) {
+//           if(messageFound) {
+//             users.findOne({
+//               where: { id: userId }
+//             })
+//             .then(function(userFound) {
+//               done(null, messageFound, userFound);
+//             })
+//             .catch(function(err) {
+//               return res.status(500).json({ 'error': 'unable to verify user' });
+//             });
+//           } else {
+//             res.status(404).json({ 'error': 'post already liked' });
+//           }
+//         },
+//         function(messageFound, userFound, done) {
+//           if(userFound) {
+//             Likes.findOne({
+//               where: {
+//                 postId: postId,
+//                 userId: userId
+//               }
+//             })
+//             .then(function(userAlreadyLikedFound) {
+//               done(null, messageFound, userFound, userAlreadyLikedFound);
+//             })
+//             .catch(function() {
+//                 Likes.create({
+//                     postId: postId,
+//                     userId: userId
+//                 })
+//             //   return res.status(500).json({ 'error': 'unable to verify is user already liked' });
+//             });
+//           } else {
+//             res.status(404).json({ 'error': 'user not exist' });
+//           }
+//         },
+//         function(messageFound, userFound, userAlreadyLikedFound, done) {
+//           if(!userAlreadyLikedFound) {
+//             messageFound.addUser(userFound, { isLike: LIKED })
+//             .then(function (alreadyLikeFound) {
+//               done(null, messageFound, userFound);
+//             })
+//             .catch(function(err) {
+//               return res.status(500).json({ 'error': 'unable to set user reaction' });
+//             });
+//           } else {
+//             if (userAlreadyLikedFound.isLike === DISLIKED) {
+//               userAlreadyLikedFound.update({
+//                 isLike: LIKED,
+//               }).then(function() {
+//                 done(null, messageFound, userFound);
+//               }).catch(function(err) {
+//                 res.status(500).json({ 'error': 'cannot update user reaction' });
+//               });
+//             } else {
+//               res.status(409).json({ 'error': 'message already liked' });
+//             }
+//           }
+//         },
+//         function(messageFound, userFound, done) {
+//             messageFound.update({
+//               likes: messageFound.likes + 1,
+//             }).then(function() {
+//               done(messageFound);
+//             }).catch(function(err) {
+//               res.status(500).json({ 'error': 'cannot update message like counter' });
+//             });
+//           },
+//         ], function(messageFound) {
+//           if (messageFound) {
+//             return res.status(201).json(messageFound);
+//           } else {
+//             return res.status(500).json({ 'error': 'cannot update message' });
+//           }
+//         });
+//       }
     // asyncLib.waterfall([
     //     function(done){
     //         Post.findOne({where: {id: postId}})

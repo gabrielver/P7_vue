@@ -3,8 +3,8 @@
       <div class="wrapper">
         <section class="form login">
           <header>GROUPOMANIA social wall</header>
-          <form class="cart__order__form" @submit.prevent="createPost"  autocomplete="off">
-            <div class="error-text"></div>
+          <form class="cart__order__form" @submit.prevent="signup"  autocomplete="off">
+            <div id="alert"></div>
             <div id="signup">
               <div class="field input">
                 <label>Name</label>
@@ -13,21 +13,24 @@
               <div class="field input">
                 <label>pseudo</label>
                 <input type="text"  id="pseudo" v-model="post.pseudo" placeholder="Enter your pseudo" required>
-                <i class="fas fa-eye"></i>
               </div>
               <div class="field input">
                 <label>Email Address</label>
                 <input type="email"  id="email" v-model="post.email" placeholder="Enter your email" required>
-                <i class="fas fa-eye"></i>
               </div>
               <div class="field input">
                 <label>Password</label>
                 <input type="text"  id="password" v-model="post.password" placeholder="Enter your password" required>
                 <i class="fas fa-eye"></i>
               </div>
+              <div class="field input">
+                <label>Password confirmation</label>
+                <input type="text"  id="password_conf" v-model="post.passwordConf" placeholder="confirm your password" required>
+                <i class="fas fa-eye"></i>
+              </div>
               <div class="field button">
                 <button
-                type="submit" class="button">Connexion</button>
+                type="submit" class="button" :class="{'button--disable' : !validatedFields}" >Connexion</button>
               </div>
               </div>
           </form>
@@ -48,8 +51,19 @@ export default {
       idx:{}
     };
   },
+   computed: {
+    validatedFields: function () {
+        if (this.post.email != "" && this.post.name != "" && this.post.pseudo != "" && this.post.password != "" && this.post.passwordConf != "") {
+          return true;
+        } else {
+          return false;
+        }
+      
+    },
+  
+  },
   methods: {
-    async createPost() {
+    async signup() {
      const self = this;
       let idx = "";
       let token = "";
@@ -60,6 +74,7 @@ export default {
         email: this.post.email,
         password: this.post.password,
       };
+      console.log(postData)
       fetch(
         "http://localhost:3000/api/auth/signup",
         {
@@ -72,8 +87,13 @@ export default {
           if (res.ok){  
             return res.json();
          //self.$router.push({ name: 'Profile', params: {id: "name1" } , replace: true});
+        }else{
+          if (res.status == 401){  
+        const errorText = document.querySelector("#alert");
+         errorText.innerHTML =  "email déjà enregister";
+          }
         }
-        })
+      })
       .then (function(data) {
           idx = data.userId,
           token = data.token,
@@ -82,8 +102,7 @@ export default {
           self.$router.push({ name: 'Profile', params: {id : idx } });
         });
         return (idx, token, pseudo) }
-
-  }
+  },
 };
 </script>
 <style>
@@ -113,6 +132,11 @@ body {
 }
 
 /* Login & Signup Form CSS Start */
+
+#alert{
+  background: rgba(255, 0, 0, 0.336);
+  color: red;
+}
 .form {
   padding: 25px 30px;
 }

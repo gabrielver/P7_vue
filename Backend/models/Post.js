@@ -36,6 +36,11 @@ const Post = sequelize.define('Post', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  likes: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false

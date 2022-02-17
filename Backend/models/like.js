@@ -1,7 +1,15 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require('../mysql');
 const Post = require('../models/Post');
-const users = require('../models/User');
+
+
+const users = sequelize.define('users', {
+  name: DataTypes.INTEGER,
+  pseudo: DataTypes.INTEGER,
+  email: DataTypes.INTEGER,
+  password: DataTypes.INTEGER
+})
+
 
     const Likes = sequelize.define('likes', {
       id: {
@@ -32,7 +40,7 @@ const users = require('../models/User');
     console.log("users in likes=",users);
     
     users.belongsToMany(Post, { through: Likes, foreignKey: 'userId', otherkey: "postId"});
-    Post.belongsToMany(users, { through: Likes, foreignKey: 'postId', otherkey: "userId"});
+    //Post.belongsToMany(users, { through: Likes, foreignKey: 'postId', otherkey: "userId"});
     Likes.belongsTo(users, { foreignKey: 'userId', as: "user"});
     Likes.belongsTo(Post, { foreignKey: 'postId', as: "post"});
   
