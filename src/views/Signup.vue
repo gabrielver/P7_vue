@@ -99,7 +99,7 @@ export default {
           token = data.token,
           pseudo = data.pseudo,
          
-          self.$router.push({ name: 'Profile', params: {id : idx } });
+          self.$router.push({ name: 'Login' });
         });
         return (idx, token, pseudo) }
   },

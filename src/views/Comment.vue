@@ -1,7 +1,7 @@
 <template>
     <div>
       <div >
-        <i @click="toggle = !toggle" class="fa-solid fa-circle-xmark"></i>
+        <i @click="router.back()" class="fa-solid fa-circle-xmark"></i>
         <p> laisser un Commentaire</p>
         <div id="message_details">          
             <i class="fa-solid fa-user"></i>
@@ -39,17 +39,6 @@
             <button v-if="!userConnectedLikes.includes(comment.id)"  type="button" class="btn btn-primary" @click="like(comment.id)"><i class="far fa-thumbs-up" ></i>{{ comment.likes }} </button>
             <button v-else  type="button" class="btn btn-primary" @click="unlike(comment.id)"><i id="blue" class="fas fa-thumbs-up" ></i>{{ comment.likes }} </button>
           </div>
-            <div class="commenter">
-               <button v-if="commentFromPost.includes(comment.id)" v-on:click="goToComment(comment)">
-                  <i class="fa-solid fa-comments"></i> 
-                  <i id="circle" class="fa-solid fa-circle"></i>                           
-                  <span>commentaires</span>
-               </button>
-               <button v-else v-on:click="goToComment(comment)">
-                  <i class="fa-solid fa-comment"></i>                             
-                  <span>commentaires</span>
-               </button>
-            </div> 
             <div class="dislikes">
                 <button v-if="!userConnectedDislikes.includes(comment.id)"  type="button" class="btn btn-primary" @click="dislike(comment.id)">{{ comment.dislikes }} <i class="far fa-thumbs-down" ></i></button>
                 <button v-else  type="button" class="btn btn-primary" @click="undislike(comment.id)">{{ comment.dislikes }} <i id="blue" class="fas fa-thumbs-down" ></i></button>
@@ -104,9 +93,7 @@ export default {
     async getUser(){
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.split('/');
-      console.log(lastURLSegment);
       let id = lastURLSegment[5];  
-      console.log(id)
       const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
       const data1 = await res1.json();
       this.user = data1;
@@ -125,7 +112,7 @@ export default {
     },
     
     createAcomment() {
-       var pageURL = window.location.href;
+      var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let postId = lastURLSegment;  
       const comment = document.getElementById('comment').value;
@@ -257,29 +244,29 @@ export default {
 
     getUserConnectedLikes() {
       var pageURL = window.location.href;
-      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-      let id = lastURLSegment;  
+      var lastURLSegment = pageURL.split('/');
+      let id = lastURLSegment[5];  
       fetch('http://localhost:3000/api/post/comment/like/'+ id)
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
           this.userConnectedLikes.push(data[i].commentId)
         }
-        console.log( this.userConnectedLikes)
+        console.log("likes:",this.userConnectedLikes)
       })
     },
 
     getUserConnectedDislikes() {
-      var pageURL = window.location.href;
-      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-      let id = lastURLSegment;  
+     var pageURL = window.location.href;
+      var lastURLSegment = pageURL.split('/');
+      let id = lastURLSegment[5];  
       fetch('http://localhost:3000/api/post/comment/dislike/'+ id)
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
           this.userConnectedDislikes.push(data[i].commentId)
         }
-        console.log( this.userConnectedDislikes)
+        console.log( "dislikes:",this.userConnectedDislikes)
       })
     },
 }}

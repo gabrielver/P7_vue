@@ -82,7 +82,7 @@ exports.deleteComment = (req, res, next) => {
 
 exports.likeComment = async (req, res, next) => {
   const userId = req.body.userId;
-  const commentId = req.body.postId;
+  const commentId = req.body.commentId;
   const mode = req.body.mode; //1 like, 0 unlike
 
   const comment = await Comment.findOne({ where: { id: commentId } });
@@ -115,7 +115,7 @@ exports.likeComment = async (req, res, next) => {
     comment.likes -= 1;
     comment.save();
 
-    Likes.destroy({
+    LikeFromCom.destroy({
       where: {
         commentId: commentId,
         userId: userId,
@@ -131,7 +131,7 @@ exports.likeComment = async (req, res, next) => {
 
 exports.dislikeComment = async (req, res, next) => {
   const userId = req.body.userId;
-  const commentId = req.body.postId;
+  const commentId = req.body.commentId;
   const mode = req.body.mode; //1 like, 0 unlike
 
   const comment = await Comment.findOne({ where: { id: commentId } });
@@ -144,7 +144,7 @@ exports.dislikeComment = async (req, res, next) => {
     const dislike = await DislikeFromCom.findOne({
       where: { commentId: commentId, userId: userId },
     });
-    if (like === null) {
+    if (dislike === null) {
       comment.dislikes += 1;
       comment.save();
 
