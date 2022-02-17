@@ -149,8 +149,8 @@ export default {
         }
       });
     },
-      unlike(id) {
-      fetch("http://localhost:3000/api/post/like",{
+    unlike(id) {
+      fetch("http://localhost:3000/api/post/comment/like",{
         method: "POST",
         headers: {
           'Accept': 'application/json',
@@ -158,7 +158,7 @@ export default {
         },
 
         body: JSON.stringify({
-          "postId": id,
+          "commentId": id,
           "userId":1,
           "mode": 0
         })
@@ -166,16 +166,16 @@ export default {
 
       this.userConnectedLikes.splice(this.userConnectedLikes.indexOf(id, 1))
       /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
-      for (let i = 0; i < this.messages.length; i++) {
-        if(this.messages[i].id === id) {
-            this.messages[i].likes -= 1;
+      for (let i = 0; i < this.comments.length; i++) {
+        if(this.comments[i].id === id) {
+            this.comments[i].likes -= 1;
         }
       }
 
     },
 
     like(id) {
-      fetch("http://localhost:3000/api/post/like",{
+      fetch("http://localhost:3000/api/post/comment/like",{
         method: "POST",
         headers: {
           'Accept': 'application/json',
@@ -183,7 +183,7 @@ export default {
         },
 
         body: JSON.stringify({
-            "postId": id,
+            "commentId": id,
             "userId":1,
             "mode": 1
         })
@@ -191,12 +191,12 @@ export default {
 
       this.userConnectedLikes.push(id)
       /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
-      for (let i = 0; i < this.messages.length; i++) {
-        if(this.messages[i].id === id) {
-          if( this.messages[i].likes === null)
-            this.messages[i].likes = 1;
+      for (let i = 0; i < this.comments.length; i++) {
+        if(this.comments[i].id === id) {
+          if( this.comments[i].likes === null)
+            this.comments[i].likes = 1;
           else
-            this.messages[i].likes += 1;
+            this.comments[i].likes += 1;
         }
       }
 
@@ -204,7 +204,7 @@ export default {
     },
 
     dislike(id) {
-      fetch("http://localhost:3000/api/post/dislike",{
+      fetch("http://localhost:3000/api/post/comment/dislike",{
         method: "POST",
         headers: {
           'Accept': 'application/json',
@@ -212,7 +212,7 @@ export default {
         },
 
         body: JSON.stringify({
-            "postId": id,
+            "commentId": id,
             "userId":1,
             "mode": 1
         })
@@ -221,17 +221,17 @@ export default {
       this.userConnectedDislikes.push(id)
       /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
       for (let i = 0; i < this.messages.length; i++) {
-        if(this.messages[i].id === id) {
-          if( this.messages[i].dislikes === null)
-            this.messages[i].dislikes = 1;
+        if(this.comments[i].id === id) {
+          if( this.comments[i].dislikes === null)
+            this.comments[i].dislikes = 1;
           else
-            this.messages[i].dislikes += 1;
+            this.comments[i].dislikes += 1;
         }
       }
     },
 
     undislike(id) {
-      fetch("http://localhost:3000/api/post/dislike",{
+      fetch("http://localhost:3000/api/post/comment/dislike",{
         method: "POST",
         headers: {
           'Accept': 'application/json',
@@ -239,7 +239,7 @@ export default {
         },
 
         body: JSON.stringify({
-          "postId": id,
+          "commentId": id,
           "userId":1,
           "mode": 0
         })
@@ -247,9 +247,9 @@ export default {
 
       this.userConnectedDislikes.splice(this.userConnectedDislikes.indexOf(id, 1))
       /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
-      for (let i = 0; i < this.messages.length; i++) {
-        if(this.messages[i].id === id) {
-            this.messages[i].dislikes -= 1;
+      for (let i = 0; i < this.comments.length; i++) {
+        if(this.comments[i].id === id) {
+            this.comments[i].dislikes -= 1;
         }
       }
 
@@ -259,11 +259,11 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let id = lastURLSegment;  
-      fetch('http://localhost:3000/api/post/like/'+ id)
+      fetch('http://localhost:3000/api/post/comment/like/'+ id)
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
-          this.userConnectedLikes.push(data[i].postId)
+          this.userConnectedLikes.push(data[i].commentId)
         }
         console.log( this.userConnectedLikes)
       })
@@ -273,11 +273,11 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let id = lastURLSegment;  
-      fetch('http://localhost:3000/api/post/dislike/'+ id)
+      fetch('http://localhost:3000/api/post/comment/dislike/'+ id)
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
-          this.userConnectedDislikes.push(data[i].postId)
+          this.userConnectedDislikes.push(data[i].commentId)
         }
         console.log( this.userConnectedDislikes)
       })

@@ -1,66 +1,62 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize  = require('../mysql');
-const Dislikes = require('../models/dislike');
-const Comment = require('../models/Comment');
+const { Sequelize, DataTypes } = require("sequelize");
+const sequelize = require("../mysql");
+const Comment = require("../models/Comment");
 
+const users = sequelize.define(
+  "users",
+  {
+    name: DataTypes.INTEGER,
+    pseudo: DataTypes.INTEGER,
+    email: DataTypes.INTEGER,
+    password: DataTypes.INTEGER,
+  },
+  {
+    timestamps: false,
+  }
+);
 
-const users = sequelize.define('users', {
-  name: DataTypes.INTEGER,
-  pseudo: DataTypes.INTEGER,
-  email: DataTypes.INTEGER,
-  password: DataTypes.INTEGER
-}, {
-  timestamps: false
-});
-
-const Likes = sequelize.define('likes', {
-  likes: DataTypes.INTEGER,
-  dislikes: DataTypes.INTEGER
-}, {});
-
-const Post = sequelize.define('Post', {
-
+const Post = sequelize.define("Post", {
   id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
   },
   userId: {
     type: DataTypes.STRING,
     allowNull: false,
-    references: {         // Post belongsTo users 1:1
+    references: {
+      // Post belongsTo users 1:1
       model: users,
-      foreignKey: 'id'
-    }
+      foreignKey: "id",
+    },
   },
   content: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   likes: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 0
+    defaultValue: 0,
   },
   dislikes: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 0
+    defaultValue: 0,
   },
   createdAt: {
     type: DataTypes.DATE,
-    allowNull: false
+    allowNull: false,
   },
   updatedAt: {
     type: DataTypes.DATE,
-    allowNull: false
-  }
+    allowNull: false,
+  },
 });
 
-   Post.hasMany(Comment, {as: 'fatherOfComment'});
-   Post.belongsTo(users, {foreignKey: 'userId', as: 'users'});
-  // Post.belongsToMany(Likes, {through: 'PostLikes', foreignKey: 'postId', as: 'ikes'});
-  
+Post.hasMany(Comment, { as: "fatherOfComment" });
+Post.belongsTo(users, { foreignKey: "userId", as: "users" });
+// Post.belongsToMany(Likes, {through: 'PostLikes', foreignKey: 'postId', as: 'ikes'});
 
-console.log("2",Post === sequelize.models.Post), // true
-module.exports = Post;
+console.log("2", Post === sequelize.models.Post), // true
+  (module.exports = Post);

@@ -10,7 +10,7 @@ const users = sequelize.define("users", {
   password: DataTypes.INTEGER,
 });
 
-const LikeFromCom = sequelize.define("likesfromcom", {
+const DislikeFromCom = sequelize.define("dislikesfromcom", {
   id: {
     allowNull: false,
     autoIncrement: true,
@@ -30,7 +30,7 @@ const LikeFromCom = sequelize.define("likesfromcom", {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
-      // LikeFromCom hasMany Users n:n
+      // DislikeFromCom hasMany Users n:n
       model: users,
       key: "id",
     },
@@ -38,12 +38,12 @@ const LikeFromCom = sequelize.define("likesfromcom", {
 });
 
 users.belongsToMany(Comment, {
-  through: LikeFromCom,
+  through: DislikeFromCom,
   foreignKey: "userId",
   otherkey: "commentId",
 });
 
-LikeFromCom.belongsTo(users, { foreignKey: "userId", as: "user" });
-LikeFromCom.belongsTo(Comment, { foreignKey: "commentId", as: "comment" });
+DislikeFromCom.belongsTo(users, { foreignKey: "userId", as: "user" });
+DislikeFromCom.belongsTo(Comment, { foreignKey: "commentId", as: "comment" });
 
-module.exports = LikeFromCom;
+module.exports = DislikeFromCom;
