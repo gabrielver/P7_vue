@@ -3,7 +3,7 @@ const router = express.Router();
 
 const commentCtrl = require('../controllers/comment');
 
-// router.get('/comment/all', commentCtrl.getAllComment)
+router.get('/comment/all', commentCtrl.getAllComment)
 router.get('/comment/all/:id', commentCtrl.getSomeComment)
 router.post('/comment', commentCtrl.createComment)
 router.get('/id/comment', commentCtrl.getOneComment)

@@ -2,12 +2,8 @@
 <div class="wrapper">
     <section class="chat-area">
       <header>
-        <div class="nav">
-         
+        <div class="nav"> 
           <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a>
-          <div   v-for="like in likes " :key="like.id">
-                   <p id="posdtId">{{like.postId}} |</p>
-                 </div>
           <button>se deconnecter</button>
         </div>
         <div class="details">
@@ -34,89 +30,29 @@
             <p>{{message.content}}</p>
           </div>
           <div class="like_dislike">
-              <!-- <div class="likes">
-                <input type="checkbox"
-                class="like_btn"
-                :value=message.id
-                name="checkbox"
-                v-bind:id="message.id"
-                active
-                @click=" displayLikes(message)"/>
-                <label class="icon" v-bind:for="message.id">
-                  <i class="far fa-thumbs-up" ></i>
-                  <p>{{message.likes}}</p>
-                </label>   
-              </div> -->
-            <div class="like"
-                :value=message.id
-                name="checkbox"
-                v-bind="message.id" >
-              <button @click="displayLikes(message)" class="like_btn"  :class="`${message.id}`">
-                <label  ><i id="icon" class="far fa-thumbs-up"></i></label>
-                 
-              </button>
-            </div>
+            <div class="likes">
+            <button v-if="!userConnectedLikes.includes(message.id)"  type="button" class="btn btn-primary" @click="like(message.id)"><i class="far fa-thumbs-up" ></i>{{ message.likes }} </button>
+            <button v-else  type="button" class="btn btn-primary" @click="unlike(message.id)"><i id="blue" class="fas fa-thumbs-up" ></i>{{ message.likes }} </button>
+          </div>
             <div class="commenter">
-               <button v-on:click="goToComment(message) ,toggle = !toggle">
-                  <i class="fa-solid fa-comment"></i>
+               <button v-if="commentFromPost.includes(message.id)" v-on:click="goToComment(message)">
+                  <i class="fa-solid fa-comments"></i> 
+                  <i id="circle" class="fa-solid fa-circle"></i>                           
+                  <span>commentaires</span>
+               </button>
+               <button v-else v-on:click="goToComment(message)">
+                  <i class="fa-solid fa-comment"></i>                             
                   <span>commentaires</span>
                </button>
             </div> 
-            <!-- <div class="commenter"  @click="toggle = !toggle" id="user">
-              <i class="fa-solid fa-comment"></i>
-              <span>commentaires</span>
-            </div>  -->
             <div class="dislikes">
-                <input type="checkbox" name="checkbox2"  v-bind:id="message.content"/>
-                <label v-bind:for="message.content">
-                  <i  class="fa-solid fa-thumbs-down"></i>
-                 
-                </label>
+                <button v-if="!userConnectedDislikes.includes(message.id)"  type="button" class="btn btn-primary" @click="dislike(message.id)">{{ message.dislikes }} <i class="far fa-thumbs-down" ></i></button>
+                <button v-else  type="button" class="btn btn-primary" @click="undislike(message.id)">{{ message.dislikes }} <i id="blue" class="fas fa-thumbs-down" ></i></button>
               </div>
-            <!-- <div @click="disliked()" class="dislikes">
-              <i class="fa-solid fa-thumbs-down"></i>
-              <span >dislike {{dislikes}}</span>
-            </div> -->
           </div>
         </div>
       </div>
-      <!-- <div v-show="toggle" id="commentaires" class="`${message.id}`">
-        <i @click="toggle = !toggle" class="fa-solid fa-circle-xmark"></i>
-        <p> laisser un Commentaire</p>
-        <form class="form" method="POST" @submit.prevent="createAcomment" >
-          <textarea id="comment" placeholder="Pour commenter, c'est ici que ça se passe!"></textarea>
-          <input type="hidden" name="user_id"  value="{{user.user_id}}" hidden >
-          <input type="hidden"  id="messagesId" value="{{message.id}}" hidden >
-          <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
-        </form>
-        <div class="commentairePoster">
-          <p>Commentaire sur le post ...{{cart.id}} de ...{{cart.name}}</p>
       
-      <div class="message" v-for="comment in comments" :key="comment.id">
-        <div id="message_details" >          
-          <i class="fa-solid fa-user"></i>
-          <div class="info">
-            <p>{{comment.users.name}}</p>
-            <span>{{comment.createdAt}}</span>
-          </div>
-        </div>
-        <div class="message_details">
-          <p>{{comment.message}}</p>
-        </div>
-        <div class="like_dislike">
-          <div @click="liked()" class="likes" >
-            <i class="fa-solid fa-thumbs-up"></i>
-            <span >like {{likes}}</span>
-          </div>
-          <div class="dislikes" @click="disliked()" >        
-            <i class="fa-solid fa-thumbs-down"></i>
-             <span >dislike {{dislikes}}</span>
-          </div>
-        </div>
-      
-      </div>
-        </div>
-      </div> -->
     </section>
   </div>
   </template>
@@ -146,14 +82,18 @@ export default {
        },
        likes: {},
        dislikes: [],
-       cart:[]
+       cart:[],
+       userConnectedLikes: [],
+       userConnectedDislikes: [],
+       commentFromPost: [],
     };
   },
    beforeMount(){
-    this.getMessage();
+    this.getAllPosts();
     this.getUser();
-     this.getLikes();
-    
+    this.getUserConnectedLikes();
+    this.getUserConnectedDislikes();
+    this.getcommentFromPost();
   },
   methods: {
 
@@ -170,37 +110,149 @@ export default {
       const self = this;
       self.$router.push({name: 'Comment', params: {id: id, postId : messageId} });
     },
-   
-     async getMessage(){
-      const res = await fetch('http://localhost:3000/api/post/all');
-      const data = await res.json();
-      this.messages = data;
-      console.log("data",data);
-    }, 
 
-  /*  //////////////////////////////////////////////////////
-    /*getComment() {
-      const postData = {postId: this.cart.id};
-      fetch(
-        "http://localhost:3000/api/post/comment/getsome",
-        {method: "POST",
-          headers: { 'Accept': 'application/json',
-                      'Content-Type': 'application/json'},
-          body: JSON.stringify(postData)})
-     .then(function (res) {
-        if (res.ok) { const data = res.json();
-      this.comment = data;}
-    })
-    
+    getAllPosts() {
+      fetch('http://localhost:3000/api/post/all')
+      .then(response => response.json() )
+      .then(data => {
+        this.messages = data
+      })
     },
-     async getComment(){
-      const id = this.cart.id;
-      const res = await fetch('http://localhost:3000/api/post/comment/all/' +id);
-      const data2 = await res.json();
-      this.comments = data2;
-    }, */
-    /////////////////////////////////////////////////////////////////*/
 
+    unlike(id) {
+      fetch("http://localhost:3000/api/post/like",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          "postId": id,
+          "userId":1,
+          "mode": 0
+        })
+      })
+
+      this.userConnectedLikes.splice(this.userConnectedLikes.indexOf(id, 1))
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+            this.messages[i].likes -= 1;
+        }
+      }
+
+    },
+
+    like(id) {
+      fetch("http://localhost:3000/api/post/like",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            "postId": id,
+            "userId":1,
+            "mode": 1
+        })
+      })
+
+      this.userConnectedLikes.push(id)
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+          if( this.messages[i].likes === null)
+            this.messages[i].likes = 1;
+          else
+            this.messages[i].likes += 1;
+        }
+      }
+
+
+    },
+
+    dislike(id) {
+      fetch("http://localhost:3000/api/post/dislike",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            "postId": id,
+            "userId":1,
+            "mode": 1
+        })
+      })
+
+      this.userConnectedDislikes.push(id)
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+          if( this.messages[i].dislikes === null)
+            this.messages[i].dislikes = 1;
+          else
+            this.messages[i].dislikes += 1;
+        }
+      }
+    },
+
+    undislike(id) {
+      fetch("http://localhost:3000/api/post/dislike",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          "postId": id,
+          "userId":1,
+          "mode": 0
+        })
+      })
+
+      this.userConnectedDislikes.splice(this.userConnectedDislikes.indexOf(id, 1))
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+            this.messages[i].dislikes -= 1;
+        }
+      }
+
+    },
+
+    getUserConnectedLikes() {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let id = lastURLSegment;  
+      fetch('http://localhost:3000/api/post/like/'+ id)
+      .then(response => response.json() )
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          this.userConnectedLikes.push(data[i].postId)
+        }
+        console.log( this.userConnectedLikes)
+      })
+    },
+
+    getUserConnectedDislikes() {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let id = lastURLSegment;  
+      fetch('http://localhost:3000/api/post/dislike/'+ id)
+      .then(response => response.json() )
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          this.userConnectedDislikes.push(data[i].postId)
+        }
+        console.log( this.userConnectedDislikes)
+      })
+    },
+  
     async getUser(){
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
@@ -212,59 +264,7 @@ export default {
 
      
     },
-   
-    
-    ////////////////////////////////////////////////////////////////
-
-    async getLikes(){
-      var pageURL = window.location.href;
-      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
-      let id = lastURLSegment;  
-      const res = await fetch('http://localhost:3000/api/post/like/' + id);
-      const data =  await res.json();
-      this.likes = data;
-      console.log("likes:",data);
-
-      
-
-    },
-
-   setLikes(id){
-      const postData = {
-        postId: id,
-        userId: this.user.id
-      }
-      console.log(postData);
-
-
-      /*fetch( "http://localhost:3000/api/post/like",
-        {method: "POST",
-          headers: { 'Accept': 'application/json',
-                      'Content-Type': 'application/json'},
-          body: JSON.stringify(postData)})
-     .then(function (res) {
-        if (res.ok) { const data = res.json();
-      console.log(data)
-    }})*/
-    },
-
-     displayLikes(message){
-    const icon = document.querySelector('#icon').value;
-    console.log(icon);
-    const posdtId = document.getElementById('#posdtId');
-    
-    console.log("like =", posdtId);
-    const post =  message.id;
-    console.log("post =",post);
-      
-      if(posdtId.value == post ){
-        console.log("match");
-      }else{
-        console.log("pas match");
-      }
-      
-    },
-      //////////////////////////////////////////////////////////////////
+ 
      createAPost() {
       const postData = {
         userId: this.user.id,
@@ -286,26 +286,19 @@ export default {
         }
     })
     },
+
+    getcommentFromPost() {
   
-    createAcomment() {
-    const comment = document.getElementById('comment').value;
-      const postData = {
-        post_Id: this.cart.id,
-        userId: this.user.id,
-        message: comment
-      };
-      fetch("http://localhost:3000/api/post/comment",{
-        method: "POST",
-        headers: { 'Accept': 'application/json',
-        'Content-Type': 'application/json'},
-        body: JSON.stringify(postData)
-      })
-      .then(function (res) {
-        if (res.ok) {
-          console.log("commentaire envoyé !!")
+      fetch('http://localhost:3000/api/post/comment/all')
+      .then(response => response.json() )
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          this.commentFromPost.push(data[i].postId)
         }
-      });
-    }
+        console.log( this.commentFromPost);
+      })
+    },
+
 }}
 
 </script>
@@ -477,17 +470,29 @@ align-items: center;
 .fa-thumbs-up:hover, .fa-thumbs-down:hover {
             color: rgba(38, 77, 251, 0.5);
           }
-.likes input, .dislikes input {
-              display: none;
-}
 
- input:checked + label i {
-                color: rgb(0, 41, 221);
+ .likes button , .dislikes button{
+   border: none;
+  background: none;
+  color: grey;
+  cursor: pointer;
+                
                 }
+
+  .likes  #blue, .dislikes  #blue{
+color: rgb(0, 41, 221);
+  }
     .message .user_details{
         display: flex;
         justify-content: flex-start;
         align-content: center;
+    }
+
+    .commenter #circle {
+      color: red;
+      font-size: 8px;
+      position: absolute;
+
     }
     #commentaires{
       position: absolute;

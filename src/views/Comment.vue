@@ -3,6 +3,17 @@
       <div >
         <i @click="toggle = !toggle" class="fa-solid fa-circle-xmark"></i>
         <p> laisser un Commentaire</p>
+        <div id="message_details">          
+            <i class="fa-solid fa-user"></i>
+            <div class="info">
+              <p>{{messages.users.name}}</p>
+              <span>{{messages.createdAt}}</span>
+            </div>
+          </div>
+          <div class="message_details">
+            <p>{{messages.content}}</p>
+          </div>
+ 
         <form class="form" method="POST" @submit.prevent="createAcomment" >
           <textarea id="comment" placeholder="Pour commenter, c'est ici que ça se passe!"></textarea>
           <input type="hidden" name="user_id" value="{{user.user_id}}" hidden >
@@ -10,13 +21,12 @@
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
         <div class="commentairePoster">
-          <p id="noComm">Commentaire sur le post</p>
+          <p id="noComm">Commentaires sur le post</p>
            <div class="box-comm">
       <div class="message" v-for="comment in comments" :key="comment.id">
         <div id="message_details" :class="`${comment.id}`">          
           <i class="fa-solid fa-user"></i>
           <div class="info">
-            <p>{{comment.id}}</p>
             <p>{{comment.users.name}}</p>
             <span>{{comment.createdAt}}</span>
           </div>
@@ -24,27 +34,27 @@
         <div class="message_details">
           <p>{{comment.message}}</p>
         </div>
-        <div class="like_dislike">
-          <div class="likes">
-                <input type="checkbox"
-                :value=comment.id
-                v-model="likes"
-                name="checkbox"
-                v-bind:id="comment.id"
-                @click="Liked()"/>
-                <label v-bind:for="comment.id">
-                  <i class="fa-solid fa-thumbs-up">{{likes}}</i>
-                </label>
-              </div>
-          <!-- <div @click="liked()" class="likes" >
-            <i class="fa-solid fa-thumbs-up"></i>
-            <span >like {{likes}}</span>
-          </div> -->
-          <div class="dislikes" @click="disliked()" >        
-            <i class="fa-solid fa-thumbs-down"></i>
-             <span >dislike {{dislikes}}</span>
+       <div class="like_dislike">
+            <div class="likes">
+            <button v-if="!userConnectedLikes.includes(comment.id)"  type="button" class="btn btn-primary" @click="like(comment.id)"><i class="far fa-thumbs-up" ></i>{{ comment.likes }} </button>
+            <button v-else  type="button" class="btn btn-primary" @click="unlike(comment.id)"><i id="blue" class="fas fa-thumbs-up" ></i>{{ comment.likes }} </button>
           </div>
-        </div>
+            <div class="commenter">
+               <button v-if="commentFromPost.includes(comment.id)" v-on:click="goToComment(comment)">
+                  <i class="fa-solid fa-comments"></i> 
+                  <i id="circle" class="fa-solid fa-circle"></i>                           
+                  <span>commentaires</span>
+               </button>
+               <button v-else v-on:click="goToComment(comment)">
+                  <i class="fa-solid fa-comment"></i>                             
+                  <span>commentaires</span>
+               </button>
+            </div> 
+            <div class="dislikes">
+                <button v-if="!userConnectedDislikes.includes(comment.id)"  type="button" class="btn btn-primary" @click="dislike(comment.id)">{{ comment.dislikes }} <i class="far fa-thumbs-down" ></i></button>
+                <button v-else  type="button" class="btn btn-primary" @click="undislike(comment.id)">{{ comment.dislikes }} <i id="blue" class="fas fa-thumbs-down" ></i></button>
+              </div>
+          </div>
       </div>
       </div>
         </div>
@@ -59,49 +69,25 @@ export default {
     return {
       commentaire: [],
       toggle : false,
-       messages: [ {
-           id: {},
-           user_id: {},
-           content: {},
-           users:{
-             name:{}
-           }
-       }],
-       user:[{
-       
-         user_id: {},
-         name: {},
-         
-       }],
+       messages: [],
+       user:[],
        post:{},
-       comments:[{
-           id:{},
-         message:{},
-         users:{
-             name:{}
-           }
-       }],
-       props: {
-         msg: {}
-       },
-       likes: 0,
-       dislikes: 0,
+       comments:[],
+       likes: [],
+       dislikes: [],
+       userConnectedLikes: [],
+       userConnectedDislikes: [],
     };
   },
    beforeMount(){
-  
-    /*this.getUser();*/
+    this.getUser();
     this.getComment();
-    /*this.getUser();*/
+    this.getThePost();
+    this.getUserConnectedLikes();
+    this.getUserConnectedDislikes();
   },
   methods: {
-    liked: function(){
-      this.likes + 1
-    },
-    disliked: function(){
-      this.dislikes - 1
-    
-    }, 
+   
      async getComment(){
        var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
@@ -114,19 +100,29 @@ export default {
         noComm.innerHTML= "Il n'y a pas encore de commentaires sur ce post ..."; 
       }
     },
-
     
-    /*async getUser(){
+    async getUser(){
       var pageURL = window.location.href;
-      var lastURLSegment = pageURL.substr(pageURL.indexOf('profile')+1);
+      var lastURLSegment = pageURL.split('/');
       console.log(lastURLSegment);
-      let id = lastURLSegment;  
+      let id = lastURLSegment[5];  
       console.log(id)
       const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
       const data1 = await res1.json();
       this.user = data1;
       console.log("users:",data1);
-    },*/
+    },
+
+    getThePost() {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let id = lastURLSegment;   
+      fetch('http://localhost:3000/api/post/' + id)
+      .then(response => response.json() )
+      .then(data => {
+        this.messages = data
+      })
+    },
     
     createAcomment() {
        var pageURL = window.location.href;
@@ -135,8 +131,8 @@ export default {
       const comment = document.getElementById('comment').value;
    
       const postData = {
-        post_Id: postId,
-        userId: this.user.user_id,
+        postId: postId,
+        userId: this.user.id,
         message: comment
       };
       
@@ -152,7 +148,140 @@ export default {
           console.log("commentaire envoyé !!")
         }
       });
-    }
+    },
+      unlike(id) {
+      fetch("http://localhost:3000/api/post/like",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          "postId": id,
+          "userId":1,
+          "mode": 0
+        })
+      })
+
+      this.userConnectedLikes.splice(this.userConnectedLikes.indexOf(id, 1))
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+            this.messages[i].likes -= 1;
+        }
+      }
+
+    },
+
+    like(id) {
+      fetch("http://localhost:3000/api/post/like",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            "postId": id,
+            "userId":1,
+            "mode": 1
+        })
+      })
+
+      this.userConnectedLikes.push(id)
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+          if( this.messages[i].likes === null)
+            this.messages[i].likes = 1;
+          else
+            this.messages[i].likes += 1;
+        }
+      }
+
+
+    },
+
+    dislike(id) {
+      fetch("http://localhost:3000/api/post/dislike",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+            "postId": id,
+            "userId":1,
+            "mode": 1
+        })
+      })
+
+      this.userConnectedDislikes.push(id)
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+          if( this.messages[i].dislikes === null)
+            this.messages[i].dislikes = 1;
+          else
+            this.messages[i].dislikes += 1;
+        }
+      }
+    },
+
+    undislike(id) {
+      fetch("http://localhost:3000/api/post/dislike",{
+        method: "POST",
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+          "postId": id,
+          "userId":1,
+          "mode": 0
+        })
+      })
+
+      this.userConnectedDislikes.splice(this.userConnectedDislikes.indexOf(id, 1))
+      /*rafraichir la liste des messages en relançant la requete ou mettre à jour le tableau de post local*/
+      for (let i = 0; i < this.messages.length; i++) {
+        if(this.messages[i].id === id) {
+            this.messages[i].dislikes -= 1;
+        }
+      }
+
+    },
+
+    getUserConnectedLikes() {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let id = lastURLSegment;  
+      fetch('http://localhost:3000/api/post/like/'+ id)
+      .then(response => response.json() )
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          this.userConnectedLikes.push(data[i].postId)
+        }
+        console.log( this.userConnectedLikes)
+      })
+    },
+
+    getUserConnectedDislikes() {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let id = lastURLSegment;  
+      fetch('http://localhost:3000/api/post/dislike/'+ id)
+      .then(response => response.json() )
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          this.userConnectedDislikes.push(data[i].postId)
+        }
+        console.log( this.userConnectedDislikes)
+      })
+    },
 }}
 
 </script>

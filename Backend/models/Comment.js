@@ -10,6 +10,12 @@ const users = sequelize.define('users', {
 }, {
   timestamps: false
 });
+const Post = sequelize.define('Post', {
+  userId: DataTypes.STRING,
+  content: DataTypes.STRING,
+  likes: DataTypes.INTEGER,
+  dislikes: DataTypes.INTEGER
+});
 
 const Comment = sequelize.define('Comment', {
 
@@ -18,14 +24,18 @@ const Comment = sequelize.define('Comment', {
     autoIncrement: true,
     primaryKey: true
   },
-  post_id: {
+  postId: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+    references: {         // comment belongsTo users 1:1
+      model: Post,
+      foreignKey: 'id'
+    }
   },
   userId: {
     type: DataTypes.STRING,
     allowNull: false,
-    references: {         // Post belongsTo users 1:1
+    references: {         // comment belongsTo users 1:1
       model: users,
       foreignKey: 'id'
     }
@@ -42,18 +52,11 @@ const Comment = sequelize.define('Comment', {
     type: DataTypes.STRING,
  
   },
-  usersLiked: {
-    type: DataTypes.STRING,
-    
-  },
-  usersDisliked: {
-    type: DataTypes.STRING,
-    
-  }
 
 });
-
+console.log('post=', Post)
 Comment.belongsTo(users, {foreignKey: 'userId', as: 'users'});
+Comment.belongsTo(Post, {foreignKey: 'postId', as: 'post'});
 
 // `sequelize.define` also returns the model
 console.log("4",Comment === sequelize.models.Comment); // true

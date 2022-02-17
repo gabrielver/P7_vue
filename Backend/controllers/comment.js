@@ -5,16 +5,17 @@ var asyncLib = require('async');
 require('dotenv').config({path:'./.env'}); 
 const users = require('../models/User');
 
-// exports.getAllComment = async (req, res, next) => {
-//     // const postId = req.body.post_Id;
-//     const comments = await Comment.findAll({include: 'users',
-//         order : [['id', 'DESC']]
-//     });
-//     return res.status(200).json(comments);
-// };
+
+
+exports.getAllComment = async (req, res, next) => {
+  const comment = await Comment.findAll({ order : [['id', 'DESC']]
+  })
+  return res.status(200).json(comment);
+};
+
 exports.getSomeComment = async (req, res, next) => {
   id = req.params.id;
-    Comment.findAll({ where: {post_id: id }, include: 'users',
+    Comment.findAll({ where: {postId: id }, include: 'users',
         order : [['id', 'DESC']]
     })
     .then(Comment =>{
@@ -32,7 +33,7 @@ exports.createComment = (req, res ,next) => {
    // date.getTime();
     console.log(date)
     const comment =  Comment.create({
-        post_id: req.body.post_Id,
+        postId: req.body.postId,
         userId: req.body.userId,
         message: req.body.message       
              // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`

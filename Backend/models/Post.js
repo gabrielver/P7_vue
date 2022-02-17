@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize  = require('../mysql');
-
+const Dislikes = require('../models/dislike');
+const Comment = require('../models/Comment');
 
 
 const users = sequelize.define('users', {
@@ -41,6 +42,11 @@ const Post = sequelize.define('Post', {
     allowNull: false,
     defaultValue: 0
   },
+  dislikes: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 0
+  },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false
@@ -51,14 +57,10 @@ const Post = sequelize.define('Post', {
   }
 });
 
-console.log("likes in post :",Likes);
-console.log("users in post :", users);
-
+   Post.hasMany(Comment, {as: 'fatherOfComment'});
    Post.belongsTo(users, {foreignKey: 'userId', as: 'users'});
-   Post.belongsToMany(Likes, {through: 'PostLikes', foreignKey: 'postId', as: 'ikes'});
+  // Post.belongsToMany(Likes, {through: 'PostLikes', foreignKey: 'postId', as: 'ikes'});
   
 
-
-// `sequelize.define` also returns the model
 console.log("2",Post === sequelize.models.Post), // true
 module.exports = Post;

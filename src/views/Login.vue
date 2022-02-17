@@ -3,7 +3,7 @@
       <div class="wrapper">
         <section class="form login">
           <header>GROUPOMANIA social wall</header>
-          <form class="cart__order__form" @submit.prevent="createPost"  autocomplete="off">
+          <form class="cart__order__form" @submit.prevent="login"  autocomplete="off">
             <div class="error-text"></div>
             <div id="signup">
               <div class="field input">
@@ -38,7 +38,7 @@ export default {
     };
   },
   methods: {
-    async createPost() {
+    async login() {
       const self = this;
       let idx = "";
       let token = "";

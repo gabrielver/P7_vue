@@ -4,6 +4,7 @@ var validator = require('validator');
 const Post = require('../models/post');
 const Comment = require('../models/Comment');
 const Likes = require('../models/like');
+const Dislikes = require('../models/dislike');
 
 const users = sequelize.define('users', {
 
@@ -38,6 +39,7 @@ const users = sequelize.define('users', {
   users.hasMany(Post, {as: 'authors'});
   users.hasMany(Comment, {as: 'authorsofComment'});
   users.hasMany(Likes, {as: 'likes'});
+  users.hasMany(Dislikes, {as: 'dislikes'});
 
   console.log("like in user",Likes)
 // `sequelize.define` also returns the model

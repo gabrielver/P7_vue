@@ -61,7 +61,7 @@ exports.signup = (req, res, next) => {
 
   exports.userid =  (req, res, next) =>{
     id = req.params.id;
-    users.findOne({ where:{id : id}, include: 'likes'})
+    users.findOne({ where:{id : id}})
     .then(users =>{
     if (!users) {
       console.log('Not found!');

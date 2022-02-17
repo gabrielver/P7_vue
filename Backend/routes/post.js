@@ -6,10 +6,12 @@ const testCtrl = require('../controllers/test');
 
 router.get('/all', postCtrl.getAllPost)
 router.post('/', postCtrl.createPost)
-router.get('/id', postCtrl.getOnePost)
+router.get('/:id', postCtrl.getOnePost)
 router.delete('/id', postCtrl.deletePost)
 router.post('/like', postCtrl.likePost)
 router.get('/like/:id', postCtrl.getAllLikes)
+router.post('/dislike', postCtrl.dislikePost)
+router.get('/dislike/:id', postCtrl.getAllDislikes)
 
 router.get('/test', testCtrl.test)
 router.post('/testcreate', testCtrl.testcreate)
