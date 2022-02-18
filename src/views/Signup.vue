@@ -4,33 +4,33 @@
         <section class="form login">
           <header>GROUPOMANIA social wall</header>
           <form class="cart__order__form" @submit.prevent="signup"  autocomplete="off">
-            <div id="alert"></div>
+            <p id="ErrorMsg"><!-- ci est un message d'erreur --></p>
             <div id="signup">
               <div class="field input">
                 <label>Name</label>
-                <input type="text" id="name" v-model="post.name" placeholder="Enter your Name" required>
+                <input type="text" id="name" v-on:keyup="checkInput()" v-model="post.name" placeholder="Enter your Name" required>
               </div>
               <div class="field input">
                 <label>pseudo</label>
-                <input type="text"  id="pseudo" v-model="post.pseudo" placeholder="Enter your pseudo" required>
+                <input type="text"  id="pseudo" v-on:keyup="checkInput()" v-model="post.pseudo" placeholder="Enter your pseudo" required>
               </div>
               <div class="field input">
                 <label>Email Address</label>
-                <input type="email"  id="email" v-model="post.email" placeholder="Enter your email" required>
+                <input type="email"  id="email"  v-model="post.email" placeholder="Enter your email" required>
               </div>
               <div class="field input">
                 <label>Password</label>
-                <input type="text"  id="password" v-model="post.password" placeholder="Enter your password" required>
-                <i class="fas fa-eye"></i>
+                <input type="password"  id="password" v-on:keyup="checkInput()" v-model="post.password" placeholder="Enter your password" required>
+                <i class="fas fa-eye" @click="switchVisibility()"></i>
               </div>
               <div class="field input">
                 <label>Password confirmation</label>
-                <input type="text"  id="password_conf" v-model="post.passwordConf" placeholder="confirm your password" required>
-                <i class="fas fa-eye"></i>
+                <input type="password"  id="password_conf" v-on:keyup="checkInput()" v-model="post.passwordConf" placeholder="confirm your password" required>
+                <i class="fas fa-eye" @click="switchVisibility2()"></i>
               </div>
               <div class="field button">
                 <button
-                type="submit" class="button" :class="{'button--disable' : !validatedFields}" >Connexion</button>
+                type="submit" class="button" :class="{'button--disable' : !validatedFields}" id="submit" >Connexion</button>
               </div>
               </div>
           </form>
@@ -46,6 +46,7 @@ export default {
   name: "App",
   data() {
     return {
+      errors:[],
       post: {},
       data: {},
       idx:{}
@@ -59,15 +60,103 @@ export default {
           return false;
         }
       
-    },
-  
+    }
   },
   methods: {
+    switchVisibility(){
+      const passwordField = document.getElementById('password');
+      if(passwordField.getAttribute('type') === 'password'){
+        passwordField.setAttribute('type','text');
+      }else{
+         passwordField.setAttribute('type','password');
+      }
+      const confPasswordField = document.getElementById('password_conf');
+      if(confPasswordField.getAttribute('type') === 'password'){
+        confPasswordField.setAttribute('type','text');
+      }else{
+         confPasswordField.setAttribute('type','password');
+      }
+
+    },
+    
+     disableSubmit(disabled) {
+    if (disabled) {
+        console.log("disable submit")
+        let submit = document.getElementById("submit")
+        submit.setAttribute("disabled", true);
+    } else {
+        console.log("enable submit")
+        let submit = document.getElementById("submit")
+        submit.removeAttribute("disabled");
+    }
+},
+
+    checkInput: function(){
+        let gotErrors = false;
+        let name =  document.getElementById("name");
+        let error =  document.getElementById("ErrorMsg");
+
+           //we use the condition to be sure that the caractere typed in the input are the right ones
+     if(name.value !== '') {
+        //here, the user can't use any numbers
+        if (/^[a-z\-_\s]+$/i.test(name.value)) {
+            error.innerText = "";
+        } else {
+            //if the user type a caracter he is not allowed to, an error message will appear and the submit button will be disable
+            error.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
+            gotErrors = true;
+        }
+    } else {
+        //if there is nothing in the input, the submit button is disable but there is no error message
+        gotErrors = true;
+    }
+
+    //and we do the same for each input
+    let pseudo =  document.getElementById("pseudo");
+    if(pseudo.value !== '') {
+        if (/^[a-z\-_\s]+$/i.test(pseudo.value)) {
+            error.innerText = "";
+        } else {
+            error.innerText = "Ce champs ne doit pas contenir de caractères spéciaux, merci";
+            gotErrors = true;
+        }
+    } else {
+        gotErrors = true;
+    }
+
+    let password =  document.getElementById("password");
+    if(password.value !== '') {
+         //here, the user can use numbers and letters but no special caracters
+        if (/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/i.test(password.value)) {
+             error.innerText = "";
+        } else {
+             error.innerText = "le mot de passe doit contenir au moins 8 caractères, dont 1 lettre et 1 chiffre.";
+            gotErrors = true;
+        }
+    } else {
+        gotErrors = true;
+    }
+
+   let password_conf =  document.getElementById("password_conf");
+    if(password_conf.value !== '') {
+        if (password_conf.value === password.value) {
+             error.innerText= "";
+        } else {
+             error.innerText= "le mot de passe ne correspond pas";
+            gotErrors = true;
+        }
+    } else {
+        gotErrors = true;
+    }
+
+
+
+    //we call the disableSubmit function with gotError in parameter
+     this.disableSubmit(gotErrors);
+    },
+    
     async signup() {
      const self = this;
-      let idx = "";
-      let token = "";
-      let pseudo = "";
       const postData = {
         name: this.post.name,
         pseudo: this.post.pseudo,
@@ -94,15 +183,12 @@ export default {
           }
         }
       })
-      .then (function(data) {
-          idx = data.userId,
-          token = data.token,
-          pseudo = data.pseudo,
-         
+      .then (function() { 
           self.$router.push({ name: 'Login' });
         });
-        return (idx, token, pseudo) }
+         }
   },
+
 };
 </script>
 <style>
@@ -133,8 +219,8 @@ body {
 
 /* Login & Signup Form CSS Start */
 
-#alert{
-  background: rgba(255, 0, 0, 0.336);
+#ErrorMsg{
+  background: rgba(255, 0, 0, 0.171);
   color: red;
 }
 .form {

@@ -12,8 +12,8 @@
               </div>
               <div class="field input">
                 <label>Password</label>
-                <input type="text"  id="password" v-model="post.password" placeholder="Enter your password" required>
-                <i class="fas fa-eye"></i>
+                <input type="password"  id="password" v-model="post.password" placeholder="Enter your password" required>
+                <i class="fas fa-eye" @click="switchVisibility()"></i>
               </div>
               <div class="field button">
                 <button
@@ -38,6 +38,14 @@ export default {
     };
   },
   methods: {
+      switchVisibility(){
+      const passwordField = document.getElementById('password');
+      if(passwordField.getAttribute('type') === 'password'){
+        passwordField.setAttribute('type','text');
+      }else{
+         passwordField.setAttribute('type','password');
+      }
+    },
     async login() {
       const self = this;
       let idx = "";

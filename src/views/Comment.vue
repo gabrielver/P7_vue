@@ -133,6 +133,7 @@ export default {
       .then(function (res) {
         if (res.ok) {
           console.log("commentaire envoyé !!")
+          
         }
       });
     },
