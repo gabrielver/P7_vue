@@ -17,13 +17,23 @@ const storage = multer.diskStorage({
   },
 });
 
-const filerFilter = (req, file, cb) => {
-  cb(null, true);
-};
+const maxSize = 1 * 1024 * 1024; // for 1MB
 
 const upload = multer({
   storage: storage,
-  fileFilter: filerFilter,
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
+    }
+  },
+  limits: { fileSize: maxSize },
 });
 
 module.exports = upload.single("image");

@@ -1,7 +1,7 @@
 <template>
     <div>
       <div >
-        <i @click="router.back()" class="fa-solid fa-circle-xmark"></i>
+        <i @click="goBack()" class="fa-solid fa-circle-xmark"></i>
         <p> laisser un Commentaire</p>
         <div id="message_details">          
             <i class="fa-solid fa-user"></i>
@@ -79,7 +79,9 @@ export default {
     this.getUserConnectedDislikes();
   },
   methods: {
-   
+    goBack(){
+      return this.$router.go(-1)
+    },
      async getComment(){
        var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);

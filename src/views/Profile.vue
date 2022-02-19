@@ -3,16 +3,23 @@
     <section class="chat-area">
       <header>
         <div class="nav"> 
-          <a href="" class="back-icon"><i class="fas fa-arrow-left"></i></a>
-          <button>se deconnecter</button>
+       
+          <button  @click="goBack()">Déconnection</button>
         </div>
         <div class="details">
           <i class="fa-solid fa-user"></i>
           <span>{{user.name}}</span>
           <form   class="cart__order__form" @submit.prevent="createAPost"  autocomplete="off">
           <input type="text" name="userid" v-model="post.userid" hidden>
-          <input type="text" name="message" v-model="post.content" class="input-field" placeholder="A quoi tu penses ..." autocomplete="off">
-          <input type="file" name="image" @change="onFileSelected">
+          <textarea id="message" type="text" name="message" v-model="post.content" class="input-field" placeholder="A quoi tu penses ..." autocomplete="off"></textarea>
+          <div class="image">
+              <label class="img">
+                <input type="file" name="image" @change="onFileSelected" hidden/>
+                <span class="icon">
+                  <i class="fa-solid fa-image"></i>
+                </span>
+              </label>
+          </div>        
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
           </form>
         </div>
@@ -103,6 +110,9 @@ export default {
     this.getcommentFromPost();
   },
   methods: {
+     goBack(){
+      return this.$router.go(-1)
+    },
     onFileSelected(event){
       this.selectedFile = event.target.files[0]
       this.selectedFile.filename = event.target.files[0].name
@@ -292,6 +302,7 @@ export default {
           method: "POST",
           body: formData
         })
+        
     },
 
     getcommentFromPost() {
@@ -315,31 +326,26 @@ header{
     position: fixed;
     flex-direction: column;
     border-radius: 17px;
-     background: white;
-    
-     width: 100%;
-     
-      top: 6%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-     
+    background: white;
+    width: 100%;
+    top: 6%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+   
 }
 
 header .nav{
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  
-  
+  position: absolute;
+  right: 13%;
+  top: 30%;
 }
-.nav i{
-  margin-right: 15rem;
-}
+
 .nav button{
   border: none;
   border-radius: 17px;
   padding: 0rem 0.5rem;
   cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 header .details{
     background: white;
@@ -347,23 +353,26 @@ header .details{
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    margin-top: 1rem;
     padding: 0.5rem;
     border-radius: 17px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    width: 80%;
+    padding-top: 4rem;
 }
 .details form{
 display: flex;
 flex: 1;
-
+align-items: center;
+width: 60%;
 }
-.details form input{
-  border-radius: 17px;
+.details form textarea{
+  border-radius: 17px 0px 0px 17px;
   background: rgb(235, 235, 235);
   color: gray;
   flex-grow: 2;
   border: none;
   padding: 0.5rem 1rem;
+  height: 90% ;
 
 }
 .details span{
@@ -383,6 +392,7 @@ flex: 1;
   background: white;
   pointer-events: all;
   cursor: pointer;
+  height: 30%;
 }
 .details button i{
   width: 50px;
@@ -393,6 +403,14 @@ flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.icon i {
+ background: rgba(1, 27, 172, 0.363);
+ border-radius: 0px 17px 17px 0px;
+ height: 56px;
+margin-right: 0.5rem;
+cursor: pointer;
 }
 .box{
   padding-top: 10rem;
