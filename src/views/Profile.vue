@@ -9,9 +9,10 @@
         <div class="details">
           <i class="fa-solid fa-user"></i>
           <span>{{user.name}}</span>
-          <form  class="cart__order__form" @submit.prevent="createAPost"  autocomplete="off">
+          <form   class="cart__order__form" @submit.prevent="createAPost"  autocomplete="off">
           <input type="text" name="userid" v-model="post.userid" hidden>
           <input type="text" name="message" v-model="post.content" class="input-field" placeholder="A quoi tu penses ..." autocomplete="off">
+          <input type="file" name="image" @change="onFileSelected">
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
           </form>
         </div>
@@ -27,7 +28,10 @@
             </div>
           </div>
           <div class="message_details">
-            <p>{{message.content}}</p>
+            <div class="image">
+              <img :src="`${message.imageUrl}`" alt="">
+            </div>
+            <p id="content">{{message.content}}</p>
           </div>
           <div class="like_dislike">
             <div class="likes">
@@ -67,6 +71,7 @@ export default {
            id: {},
            user_id: {},
            content: {},
+           imageUrl:{},
            users:{
              name:{}
            }
@@ -86,6 +91,8 @@ export default {
        userConnectedLikes: [],
        userConnectedDislikes: [],
        commentFromPost: [],
+       selectedFile: [],
+       file:[]
     };
   },
    beforeMount(){
@@ -96,6 +103,12 @@ export default {
     this.getcommentFromPost();
   },
   methods: {
+    onFileSelected(event){
+      this.selectedFile = event.target.files[0]
+      this.selectedFile.filename = event.target.files[0].name
+      console.log(this.selectedFile)
+  
+    },
 
     goToComment(message){
       this.cart.id = message.id,
@@ -266,25 +279,19 @@ export default {
     },
  
      createAPost() {
-      const postData = {
-        userId: this.user.id,
-        content: this.post.content  
-      };
+    const content= this.post.content;
+
+     let formData = new FormData();
+     formData.append( 'image',this.selectedFile);
+     formData.append( 'userId', this.user.id);
+     formData.append( 'content', content);
+    
       fetch(
         "http://localhost:3000/api/post",
         {
           method: "POST",
-          headers: { 'Accept': 'application/json',
-                      'Content-Type': 'application/json'},
-          body: JSON.stringify(postData)
+          body: formData
         })
-     .then(function (res) {
-        if (res.ok) {
-      const res = fetch('http://localhost:3000/api/post/all');
-      const data = res.json();
-      this.messages = data;
-        }
-    })
     },
 
     getcommentFromPost() {
@@ -295,7 +302,6 @@ export default {
         for (let i = 0; i < data.length; i++) {
           this.commentFromPost.push(data[i].postId)
         }
-        console.log( this.commentFromPost);
       })
     },
 
@@ -431,6 +437,9 @@ align-items: center;
 .message_details p{
   padding: 1rem;
   text-align: start;
+}
+.image img {
+  width: 80%;
 }
 .like_dislike{
   display: flex;

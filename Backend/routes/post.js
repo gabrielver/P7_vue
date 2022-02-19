@@ -1,19 +1,20 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const auth = require('../middlewear/auth');
-const postCtrl = require('../controllers/post');
-const testCtrl = require('../controllers/test');
+const auth = require("../middlewear/auth");
+const postCtrl = require("../controllers/post");
+const testCtrl = require("../controllers/test");
+const multer = require("../middlewear/multer-config");
 
-router.get('/all', postCtrl.getAllPost)
-router.post('/', postCtrl.createPost)
-router.get('/:id', postCtrl.getOnePost)
-router.delete('/id', postCtrl.deletePost)
-router.post('/like', postCtrl.likePost)
-router.get('/like/:id', postCtrl.getAllLikes)
-router.post('/dislike', postCtrl.dislikePost)
-router.get('/dislike/:id', postCtrl.getAllDislikes)
+router.get("/all", postCtrl.getAllPost);
+router.post("/", multer, postCtrl.createPost);
+router.get("/:id", postCtrl.getOnePost);
+router.delete("/id", postCtrl.deletePost);
+router.post("/like", postCtrl.likePost);
+router.get("/like/:id", postCtrl.getAllLikes);
+router.post("/dislike", postCtrl.dislikePost);
+router.get("/dislike/:id", postCtrl.getAllDislikes);
 
-router.get('/test', testCtrl.test)
-router.post('/testcreate', testCtrl.testcreate)
+router.get("/test", testCtrl.test);
+router.post("/testcreate", testCtrl.testcreate);
 
 module.exports = router;

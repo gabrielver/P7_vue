@@ -10,6 +10,9 @@
               <span>{{messages.createdAt}}</span>
             </div>
           </div>
+           <div class="image">
+              <img :src="`${messages.imageUrl}`" alt="">
+            </div>
           <div class="message_details">
             <p>{{messages.content}}</p>
           </div>

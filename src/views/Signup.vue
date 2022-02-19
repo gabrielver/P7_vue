@@ -30,7 +30,7 @@
               </div>
               <div class="field button">
                 <button
-                type="submit" class="button" :class="{'button--disable' : !validatedFields}" id="submit" >Connexion</button>
+                type="submit" class="button" :class="{'button--disable' : !validatedFields}" id="submit" >S'inscrire</button>
               </div>
               </div>
           </form>
