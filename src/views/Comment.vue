@@ -157,6 +157,9 @@ export default {
       });
     },
     unlike(id) {
+       var pageURL = window.location.href;
+      var lastURLSegment = pageURL.split('/');
+      let userId = lastURLSegment[5]; 
       fetch("http://localhost:3000/api/post/comment/like",{
         method: "POST",
         headers: {
@@ -166,7 +169,7 @@ export default {
 
         body: JSON.stringify({
           "commentId": id,
-          "userId":1,
+          "userId":userId,
           "mode": 0
         })
       })
@@ -182,6 +185,9 @@ export default {
     },
 
     like(id) {
+       var pageURL = window.location.href;
+      var lastURLSegment = pageURL.split('/');
+      let userId = lastURLSegment[5];  
       fetch("http://localhost:3000/api/post/comment/like",{
         method: "POST",
         headers: {
@@ -191,7 +197,7 @@ export default {
 
         body: JSON.stringify({
             "commentId": id,
-            "userId":1,
+            "userId": userId,
             "mode": 1
         })
       })
@@ -211,6 +217,9 @@ export default {
     },
 
     dislike(id) {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.split('/');
+      let userId = lastURLSegment[5];  
       fetch("http://localhost:3000/api/post/comment/dislike",{
         method: "POST",
         headers: {
@@ -220,7 +229,7 @@ export default {
 
         body: JSON.stringify({
             "commentId": id,
-            "userId":1,
+            "userId":userId,
             "mode": 1
         })
       })
@@ -238,6 +247,9 @@ export default {
     },
 
     undislike(id) {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.split('/');
+      let userId = lastURLSegment[5];  
       fetch("http://localhost:3000/api/post/comment/dislike",{
         method: "POST",
         headers: {
@@ -247,7 +259,7 @@ export default {
 
         body: JSON.stringify({
           "commentId": id,
-          "userId":1,
+          "userId":userId,
           "mode": 0
         })
       })

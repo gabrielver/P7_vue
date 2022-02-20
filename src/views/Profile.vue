@@ -6,28 +6,35 @@
        
           <button  @click="getOut()"><router-link :to="{name:'Login'}" replace>Déconnection</router-link></button>
         </div>
+        
         <div class="details">
           <i class="fa-solid fa-user"></i>
           <span>{{user.name}}</span>
-          <form   class="cart__order__form" @submit.prevent="createAPost"  autocomplete="off">
+          <form   class="cart__order__form" @submit.prevent="createAPost"  autocomplete="off">        
           <input type="text" name="userid" v-model="post.userid" hidden>
           <textarea id="message" type="text" name="message" v-model="post.content" class="input-field" placeholder="A quoi tu penses ..." autocomplete="off"></textarea>
           <div class="image">
               <label class="img">
                 <input type="file" name="image" @change="onFileSelected" hidden/>
                 <span class="icon">
-                  <i class="fa-solid fa-image"></i>
+                  <i class="fa-solid fa-image"> </i>
+                  2Mo max
                 </span>
               </label>
           </div>        
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
           </form>
+          
         </div>
+        <div id="imgPreview">
+           <img id="preview" src="" alt="">
+        </div>
+        
       </header>
       <div class="box">
      
         <div class="message"  v-for="message in messages" :key="message.id">
-                      
+
           <div id="message_details" :class="`${message.id}`">          
             <i class="fa-solid fa-user"></i>
             <div class="info">
@@ -136,6 +143,17 @@ export default {
       this.selectedFile = event.target.files[0]
       this.selectedFile.filename = event.target.files[0].name
       console.log(this.selectedFile)
+
+      const previewImg = document.getElementById('preview');
+      console.log(previewImg);
+      const file = this.selectedFile;
+      if(file){
+        const reader = new FileReader();
+        reader.addEventListener('load', function() {
+          previewImg.setAttribute("src", this.result);
+        });
+        reader.readAsDataURL(file);
+      }
   
     },
 
@@ -167,6 +185,9 @@ export default {
     },
 
     unlike(id) {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let userId = lastURLSegment;
       fetch("http://localhost:3000/api/post/like",{
         method: "POST",
         headers: {
@@ -176,7 +197,7 @@ export default {
 
         body: JSON.stringify({
           "postId": id,
-          "userId":1,
+          "userId":userId,
           "mode": 0
         })
       })
@@ -192,6 +213,9 @@ export default {
     },
 
     like(id) {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let userId = lastURLSegment;  
       fetch("http://localhost:3000/api/post/like",{
         method: "POST",
         headers: {
@@ -201,7 +225,7 @@ export default {
 
         body: JSON.stringify({
             "postId": id,
-            "userId":1,
+            "userId":userId,
             "mode": 1
         })
       })
@@ -221,6 +245,9 @@ export default {
     },
 
     dislike(id) {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let userId = lastURLSegment;
       fetch("http://localhost:3000/api/post/dislike",{
         method: "POST",
         headers: {
@@ -230,7 +257,7 @@ export default {
 
         body: JSON.stringify({
             "postId": id,
-            "userId":1,
+            "userId":userId,
             "mode": 1
         })
       })
@@ -248,6 +275,9 @@ export default {
     },
 
     undislike(id) {
+      var pageURL = window.location.href;
+      var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
+      let userId = lastURLSegment;
       fetch("http://localhost:3000/api/post/dislike",{
         method: "POST",
         headers: {
@@ -257,7 +287,7 @@ export default {
 
         body: JSON.stringify({
           "postId": id,
-          "userId":1,
+          "userId":userId,
           "mode": 0
         })
       })
