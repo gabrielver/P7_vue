@@ -38,19 +38,19 @@ exports.getAllDislikes = async (req, res, next) => {
 
 exports.createPost = (req, res, next) => {
   delete req.body.user_id;
-  upload(req, res, function (err) {
-    if (err instanceof multer.MulterError) {
-      // A Multer error occurred when uploading.
-      res.send(err);
-    } else if (err) {
-      // An unknown error occurred when uploading.
-      res.send(err);
-    }
+  // upload(req, res, function (err) {
+  //   if (err instanceof multer.MulterError) {
+  //     // A Multer error occurred when uploading.
+  //     res.send(err);
+  //   } else if (err) {
+  //     // An unknown error occurred when uploading.
+  //     res.send(err);
+  //   }
 
-    console.log(req.file);
+  //   console.log(req.file);
 
-    // Everything went fine.
-  });
+  //   // Everything went fine.
+  // });
   const post = Post.create({
     userId: req.body.userId,
     content: req.body.content,

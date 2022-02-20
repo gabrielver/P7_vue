@@ -4,7 +4,7 @@
       <header>
         <div class="nav"> 
        
-          <button  @click="goBack()">Déconnection</button>
+          <button  @click="getOut()"><router-link :to="{name:'Login'}" replace>Déconnection</router-link></button>
         </div>
         <div class="details">
           <i class="fa-solid fa-user"></i>
@@ -25,6 +25,7 @@
         </div>
       </header>
       <div class="box">
+     
         <div class="message"  v-for="message in messages" :key="message.id">
           
           <div id="message_details" :class="`${message.id}`">          
@@ -110,8 +111,9 @@ export default {
     this.getcommentFromPost();
   },
   methods: {
-     goBack(){
-      return this.$router.go(-1)
+     getOut(){
+       localStorage.removeItem('token')
+      
     },
     onFileSelected(event){
       this.selectedFile = event.target.files[0]
@@ -135,7 +137,12 @@ export default {
     },
 
     getAllPosts() {
-      fetch('http://localhost:3000/api/post/all')
+      fetch('http://localhost:3000/api/post/all',
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      })
       .then(response => response.json() )
       .then(data => {
         this.messages = data
@@ -300,8 +307,12 @@ export default {
         "http://localhost:3000/api/post",
         {
           method: "POST",
+          headers:{
+          'Authorization':  localStorage.getItem('token')
+        },
           body: formData
         })
+        
         
     },
 
