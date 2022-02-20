@@ -8,7 +8,7 @@ const multer = require("../middlewear/multer-config");
 router.get("/all", auth, postCtrl.getAllPost);
 router.post("/", auth, multer, postCtrl.createPost);
 router.get("/:id", postCtrl.getOnePost);
-router.delete("/id", postCtrl.deletePost);
+router.delete("/:id", postCtrl.deletePost);
 router.post("/like", postCtrl.likePost);
 router.get("/like/:id", postCtrl.getAllLikes);
 router.post("/dislike", postCtrl.dislikePost);

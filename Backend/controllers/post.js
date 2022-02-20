@@ -38,19 +38,6 @@ exports.getAllDislikes = async (req, res, next) => {
 
 exports.createPost = (req, res, next) => {
   delete req.body.user_id;
-  // upload(req, res, function (err) {
-  //   if (err instanceof multer.MulterError) {
-  //     // A Multer error occurred when uploading.
-  //     res.send(err);
-  //   } else if (err) {
-  //     // An unknown error occurred when uploading.
-  //     res.send(err);
-  //   }
-
-  //   console.log(req.file);
-
-  //   // Everything went fine.
-  // });
   const post = Post.create({
     userId: req.body.userId,
     content: req.body.content,
@@ -79,20 +66,27 @@ exports.getOnePost = (req, res, next) => {
 };
 
 exports.deletePost = (req, res, next) => {
-  var url = req.originalUrl;
-  var postid = url.substring(url.lastIndexOf("=") + 1);
+  postid = req.params.id;
   Post.findOne({
     where: { id: postid },
   })
     .then((post) => {
-      //const filename = sauce.imageUrl.split('/images/')[1];
-      //fs.unlink(`images/${filename}`, () => {
-      Post.destroy({
-        where: { id: postid },
-      })
-        .then(() => res.status(200).json({ message: "deleted" }))
-        .catch((error) => res.status(400).json({ error: error }));
+      if (post.imageUrl) {
+        const filename = post.imageUrl.split("/images/")[1];
+        fs.unlink(`images/${filename}`, () => {
+          Post.destroy({ where: { id: postid } })
+            .then(() => res.status(200).json({ message: "deleted" }))
+            .catch((error) => res.status(400).json({ error: error }));
+        });
+      } else {
+        Post.destroy({
+          where: { id: postid },
+        })
+          .then(() => res.status(200).json({ message: "deleted" }))
+          .catch((error) => res.status(400).json({ error: error }));
+      }
     })
+
     .catch((error) => res.status(500).json({ error }));
 };
 

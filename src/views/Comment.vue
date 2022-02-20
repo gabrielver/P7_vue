@@ -27,6 +27,9 @@
           <p id="noComm">Commentaires sur le post</p>
            <div class="box-comm">
       <div class="message" v-for="comment in comments" :key="comment.id">
+          <div v-if="user.id == 1" id="delete" @click="del(comment.id)" >
+              <i  class="fa-solid fa-circle-xmark"></i>
+            </div>
         <div id="message_details" :class="`${comment.id}`">          
           <i class="fa-solid fa-user"></i>
           <div class="info">
@@ -34,6 +37,7 @@
             <span>{{comment.createdAt}}</span>
           </div>
         </div>
+       
         <div class="message_details">
           <p>{{comment.message}}</p>
         </div>
@@ -79,6 +83,16 @@ export default {
     this.getUserConnectedDislikes();
   },
   methods: {
+    del(id){
+      console.log(id);
+      fetch(
+        "http://localhost:3000/api/post/comment/" + id,
+        {
+          method: "delete",
+          headers: { 'Authorization':  localStorage.getItem('token')},
+        })
+        this.getComment();
+    },
     goBack(){
       return this.$router.go(-1)
     },

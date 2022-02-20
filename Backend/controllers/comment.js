@@ -29,16 +29,12 @@ exports.getSomeComment = async (req, res, next) => {
 
 exports.createComment = (req, res, next) => {
   delete req.body.user_id;
-  const date = new Date();
-  // date.getTime();
-  console.log(date);
+
   const comment = Comment.create({
     postId: req.body.postId,
     userId: req.body.userId,
     message: req.body.message,
-    // imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   })
-
     .then(() => res.status(201).json({ message: "Objet enregistré !" }))
     .catch((error) => res.status(400).json({ error }));
 };
@@ -63,14 +59,11 @@ exports.getOneComment = (req, res, next) => {
 };
 
 exports.deleteComment = (req, res, next) => {
-  var url = req.originalUrl;
-  var commentid = url.substring(url.lastIndexOf("=") + 1);
+  var commentid = req.params.id;
   Comment.findOne({
     where: { id: commentid },
   })
     .then((comment) => {
-      //const filename = sauce.imageUrl.split('/images/')[1];
-      //fs.unlink(`images/${filename}`, () => {
       Comment.destroy({
         where: { id: commentid },
       })

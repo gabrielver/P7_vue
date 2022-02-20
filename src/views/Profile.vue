@@ -27,7 +27,7 @@
       <div class="box">
      
         <div class="message"  v-for="message in messages" :key="message.id">
-          
+                      
           <div id="message_details" :class="`${message.id}`">          
             <i class="fa-solid fa-user"></i>
             <div class="info">
@@ -35,6 +35,9 @@
               <span>{{message.createdAt}}</span>
             </div>
           </div>
+           <div v-if="user.id == 1" id="delete" @click="del(message.id)" >
+              <i  class="fa-solid fa-circle-xmark"></i>
+            </div>
           <div class="message_details">
             <div class="image">
               <img :src="`${message.imageUrl}`" alt="">
@@ -111,10 +114,24 @@ export default {
     this.getcommentFromPost();
   },
   methods: {
+    del(id){
+      console.log(id);
+      fetch(
+        "http://localhost:3000/api/post/" + id,
+        {
+          method: "delete",
+          headers:{
+          'Authorization':  localStorage.getItem('token')
+        },
+        })
+        this.getAllPosts();
+    },
+
      getOut(){
        localStorage.removeItem('token')
       
     },
+
     onFileSelected(event){
       this.selectedFile = event.target.files[0]
       this.selectedFile.filename = event.target.files[0].name
@@ -296,6 +313,7 @@ export default {
     },
  
      createAPost() {
+       
     const content= this.post.content;
 
      let formData = new FormData();
@@ -312,7 +330,8 @@ export default {
         },
           body: formData
         })
-        
+       
+         this.getAllPosts();
         
     },
 
@@ -435,6 +454,7 @@ cursor: pointer;
 
 }
 #message_details{
+ 
 display: flex;
 align-items: center;
 }
@@ -463,6 +483,15 @@ align-items: center;
   justify-content: center;
   align-items: center;
 }
+ #delete{
+
+  cursor: pointer;
+}
+
+#delete i{
+background: none;
+}
+
 .message_details p{
   padding: 1rem;
   text-align: start;
