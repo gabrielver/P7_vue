@@ -6,7 +6,7 @@
           <button  @click="getOut()"><router-link :to="{name:'Login'}" replace>Déconnection</router-link></button>
         </div>      
         <div class="details">
-          <i class="fa-solid fa-user"></i>
+          <i id="fa-user" class="fa-solid fa-user"></i>
           <span>{{user.name}}</span>
           <form   class="cart__order__form" @submit.prevent="createAPost"  autocomplete="off">        
           <input type="text" name="userid" v-model="post.userid" hidden>
@@ -16,7 +16,7 @@
                 <input type="file" name="image" @change="onFileSelected" hidden/>
                 <span class="icon">
                   <i class="fa-solid fa-image"> </i>
-                  2Mo max
+                 <p> 2Mo max</p>
                 </span>
               </label>
           </div>        
@@ -468,6 +468,7 @@ display: flex;
 flex: 1;
 align-items: center;
 width: 60%;
+
 }
 .details form textarea{
   border-radius: 17px 0px 0px 17px;
@@ -516,6 +517,14 @@ width: 60%;
 margin-right: 0.5rem;
 cursor: pointer;
 }
+.icon  p {
+        font-size: 12px;
+        
+      }
+      .image {
+       padding-top: 17px;
+
+      }
 #imgPreview{
   display: none;
   justify-content: center;
@@ -697,5 +706,43 @@ color: rgb(0, 41, 221);
     .commentairePoster{
       border-top: 1px solid;
       border-radius: 17px 17px 0px 0px;
+    }
+
+    @media screen and (max-width: 600px){
+      
+      header .details{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+      }
+      .details form{
+       width: 100%;
+        align-items: center;
+        
+      }
+      form button{
+        padding: 0;
+    }
+    .details #fa-user{
+      width: 25px;
+      height: 25px;
+    }
+    
+      .image {
+        padding-top: 15px;
+      }
+      .icon  p {
+        font-size: 10px;
+      }
+      .box{
+        margin-top: 8rem;
+      }
+      .info{
+        font-size: 14px;
+      }
+      #content{
+        font-size: 12px;
+      }
     }
 </style>

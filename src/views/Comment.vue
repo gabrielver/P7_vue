@@ -21,7 +21,7 @@
           <textarea id="comment"  v-model="post.content" placeholder="Pour commenter, c'est ici que ça se passe!"></textarea>
           <input type="hidden" name="user_id" value="{{user.user_id}}" hidden >
           <input type="hidden" id="post_id" value="{{message.id}}" hidden >
-          <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+          <button id="button" type="submit"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
         <div class="commentairePoster">
           <p id="noComm">Commentaires sur le post</p>
@@ -346,3 +346,55 @@ export default {
 }}
 
 </script>
+<style>
+form{
+display: flex;
+align-items: center;
+justify-content: center;
+
+}
+ form #button{
+    background: rgb(228, 228, 228);
+    padding: 0rem 1rem;
+    border-radius: 17px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border: none;
+    cursor: pointer;
+    }
+@media screen and (max-width: 600px){
+      
+      header .details{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+      }
+      .details form{
+       width: 100%;
+        align-items: center;
+        
+      }
+      form #button{
+        padding: 0rem;
+    }
+    .details #fa-user{
+      width: 25px;
+      height: 25px;
+    }
+    
+      .image {
+        padding-top: 15px;
+      }
+      .message_details  p {
+        font-size: 12px;
+      }
+      .box{
+        margin-top: 8rem;
+      }
+      .info{
+        font-size: 14px;
+      }
+      #content{
+        font-size: 12px;
+      }
+    }</style>

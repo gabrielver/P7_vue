@@ -487,15 +487,13 @@ body {
     width: 30px;
   }
   .chat-area form {
-    padding: 20px;
+    padding: 0px 5px;
   }
   .chat-area form input {
     height: 40px;
     width: calc(100% - 48px);
   }
-  .chat-area form button {
-    width: 45px;
-  }
+  
 }
 
 </style>
