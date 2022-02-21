@@ -2,7 +2,9 @@
   <div id="app">
       <div class="wrapper">
         <section class="form login">
-          <header>GROUPOMANIA social wall</header>
+          <header class="signup" >
+            <img src="../assets/icon-left-font-monochrome-black.png" alt="">
+          </header>
           <form class="cart__order__form" @submit.prevent="signup"  autocomplete="off">
             <p id="ErrorMsg"><!-- ci est un message d'erreur --></p>
             <div id="signup">
@@ -219,17 +221,22 @@ body {
 
 /* Login & Signup Form CSS Start */
 
+.signup{
+  position: relative;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
 #ErrorMsg{
   background: rgba(255, 0, 0, 0.171);
   color: red;
 }
 .form {
   padding: 25px 30px;
+  border-radius: 17px;
 }
 .form header {
   font-size: 25px;
   font-weight: 600;
-  padding-bottom: 10px;
+
   border-bottom: 1px solid #e6e6e6;
 }
 .form form {
@@ -310,7 +317,7 @@ body {
 .form .link a:hover {
   text-decoration: underline;
 }
-.chat-area header {
+.chat-area .head {
   display: flex;
   align-items: center;
   padding: 18px 30px;

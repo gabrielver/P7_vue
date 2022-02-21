@@ -40,21 +40,6 @@ exports.login = async (req, res, next) => {
   var email = req.body.email;
   var password = req.body.password;
 
-  // const user = await users.findOne({ where: { email: req.body.email } });
-  // if (!user) {
-  //   return res.status(400).send("Email introuvable");
-  // }
-
-  // const validPass = await bcrypt.compare(req.body.password, users.password);
-  // if (!validPass) {
-  //   return res.staus(400).send("Mot de passe incorrect !");
-  // }
-
-  // const token = jwt.sign({ userId: users.id }, process.env.APP_KEY, {
-  //   expiresIn: "24h",
-  // });
-  // res.header("auth-token", token).send(token);
-
   users
     .findOne({
       where: { email: email },
@@ -83,21 +68,33 @@ exports.login = async (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-// exports.login = async (req, res, next) => {
-//   let userExist = await users.findOne({ where: { email: req.body.email } });
-//   if (!userExist) return res.status(400).send({ message: "email not found" });
-//   let validPassword = await bcrypt.compare(
-//     req.body.password,
-//     userExist.password
-//   );
-//   if (!validPassword)
-//     return res.status(400).send({ message: "Password is incorect" });
-//   var newToken = jwt.sign({ userId: userExist.id }, process.env.APP_KEY, {
-//     expiresIn: "24h",
-//   });
-//   let userId = userExist.id;
-//   res.status(200).header("token", newToken).send(String(userId));
-// };
+exports.deleteUser = async (req, res, next) => {
+  var email = req.body.email;
+  var password = req.body.password;
+
+  users
+    .findOne({
+      where: { email: email },
+    })
+    .then((users) => {
+      if (users === null) {
+        return res.status(401).json({ error: "Utilisateur non trouvé !" });
+      }
+      bcrypt
+        .compare(password, users.password)
+        .then((valid) => {
+          if (!valid) {
+            return res.status(401).json({ error: "Mot de passe incorrect !" });
+          }
+          users.destroy({
+            where: { email: email },
+          });
+          res.status(200).json({ mesage: "compte supprimer" });
+        })
+        .catch((error) => res.status(500).json({ error }));
+    })
+    .catch((error) => res.status(500).json({ error }));
+};
 
 exports.userid = (req, res, next) => {
   id = req.params.id;

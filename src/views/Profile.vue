@@ -1,12 +1,10 @@
 <template>
 <div class="wrapper">
     <section class="chat-area">
-      <header>
+      <header class="head">
         <div class="nav"> 
-       
           <button  @click="getOut()"><router-link :to="{name:'Login'}" replace>Déconnection</router-link></button>
-        </div>
-        
+        </div>      
         <div class="details">
           <i class="fa-solid fa-user"></i>
           <span>{{user.name}}</span>
@@ -34,7 +32,10 @@
       <div class="box">
      
         <div class="message"  v-for="message in messages" :key="message.id">
-
+  <div v-if="user.id == 1" id="delete" @click="del(message.id)" >
+             <p> supprimer</p>
+              <i  class="fa-solid fa-circle-xmark"></i>
+            </div>
           <div id="message_details" :class="`${message.id}`">          
             <i class="fa-solid fa-user"></i>
             <div class="info">
@@ -42,9 +43,7 @@
               <span>{{message.createdAt}}</span>
             </div>
           </div>
-           <div v-if="user.id == 1" id="delete" @click="del(message.id)" >
-              <i  class="fa-solid fa-circle-xmark"></i>
-            </div>
+         
           <div class="message_details">
             <div class="image">
               <img :src="`${message.imageUrl}`" alt="">
@@ -114,6 +113,7 @@ export default {
     };
   },
    beforeMount(){
+     this.checkSession();
     this.getAllPosts();
     this.getUser();
     this.getUserConnectedLikes();
@@ -121,9 +121,18 @@ export default {
     this.getcommentFromPost();
   },
   methods: {
-    del(id){
+    async checkSession(){
+      const token = localStorage.getItem('token');
+      console.log(token);
+      if(!token){
+      const self = this;
+      self.$router.push({name: 'Login'});
+      }
+
+    },
+    async del(id){
       console.log(id);
-      fetch(
+      await fetch(
         "http://localhost:3000/api/post/" + id,
         {
           method: "delete",
@@ -144,12 +153,15 @@ export default {
       this.selectedFile.filename = event.target.files[0].name
       console.log(this.selectedFile)
 
+      const imgPreview = document.getElementById('imgPreview');
       const previewImg = document.getElementById('preview');
       console.log(previewImg);
       const file = this.selectedFile;
       if(file){
         const reader = new FileReader();
         reader.addEventListener('load', function() {
+          imgPreview.style.display = "flex";
+          previewImg.style.display = "block";
           previewImg.setAttribute("src", this.result);
         });
         reader.readAsDataURL(file);
@@ -171,8 +183,8 @@ export default {
       self.$router.push({name: 'Comment', params: {id: id, postId : messageId} });
     },
 
-    getAllPosts() {
-      fetch('http://localhost:3000/api/post/all',
+    async getAllPosts(){
+      await fetch('http://localhost:3000/api/post/all',
       {
         headers:{
           'Authorization':  localStorage.getItem('token')
@@ -342,16 +354,18 @@ export default {
      
     },
  
-     createAPost() {
+     async createAPost() {
        
     const content= this.post.content;
+     const imgPreview = document.getElementById('imgPreview');
+      const previewImg = document.getElementById('preview');
 
      let formData = new FormData();
      formData.append( 'image',this.selectedFile);
      formData.append( 'userId', this.user.id);
      formData.append( 'content', content);
     
-      fetch(
+    await  fetch(
         "http://localhost:3000/api/post",
         {
           method: "POST",
@@ -360,7 +374,10 @@ export default {
         },
           body: formData
         })
-       
+        imgPreview.style.display = "none";
+        previewImg.style.display = "none";
+         this.post.content = "";
+
          this.getAllPosts();
         
     },
@@ -382,22 +399,23 @@ export default {
 
 <style>
 
-header{
+header {
     position: fixed;
     flex-direction: column;
+    justify-content: center;
+    align-items: center;
     border-radius: 17px;
     background: white;
     width: 100%;
-    top: 6%;
+    top: 3%;
     left: 50%;
     transform: translate(-50%, -50%);
    
 }
 
 header .nav{
-  position: absolute;
-  right: 13%;
-  top: 30%;
+ position: fixed;
+top: 3;
 }
 
 .nav button{
@@ -416,8 +434,10 @@ header .details{
     padding: 0.5rem;
     border-radius: 17px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    width: 80%;
-    padding-top: 4rem;
+  width: 80%;
+  margin-top: 15rem;
+
+
 }
 .details form{
 display: flex;
@@ -471,6 +491,23 @@ width: 60%;
  height: 56px;
 margin-right: 0.5rem;
 cursor: pointer;
+}
+#imgPreview{
+  display: none;
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+  width: 300px;
+  min-height: 100px;
+
+  
+}
+#preview{
+  display: none;
+  width: 100%;
+  height: 100%;
+  border: 1px solid;
+ 
 }
 .box{
   padding-top: 10rem;

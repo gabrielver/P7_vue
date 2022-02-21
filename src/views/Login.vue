@@ -1,8 +1,12 @@
 <template>
   <div id="app">
       <div class="wrapper">
+        <div class="bandeau"><button class="deleteAccount"><router-link :to="{name:'Delete'}" replace>supprimer mon compte</router-link></button></div>
         <section class="form login">
-          <header>GROUPOMANIA social wall</header>
+          
+          <header class="login"> 
+           <img src="../assets/icon-left-font-monochrome-black.png" alt="">
+           </header>
           <form class="cart__order__form" @submit.prevent="login"  autocomplete="off">
             <div class="error-text"></div>
             <div id="signup">
@@ -82,3 +86,31 @@ export default {
   }
 };
 </script>
+<style>
+.login{
+  position: relative;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  
+}
+header img{
+width: 40%;
+height: 40%;
+padding-top: 1rem;
+
+}
+
+.deleteAccount{
+  position: absolute;
+  top: 2%;
+  right: 3%;
+  border-radius: 35px;
+  height: 65px;
+  width: 65px;
+  font-size: 9px;
+  font-weight: bold;
+   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+   background: rgb(255, 255, 255);
+   border: 1px solid rgba(255, 0, 0, 0.185);
+}
+
+</style>

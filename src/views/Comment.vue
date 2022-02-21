@@ -18,7 +18,7 @@
           </div>
  
         <form class="form" method="POST" @submit.prevent="createAcomment" >
-          <textarea id="comment" placeholder="Pour commenter, c'est ici que ça se passe!"></textarea>
+          <textarea id="comment"  v-model="post.content" placeholder="Pour commenter, c'est ici que ça se passe!"></textarea>
           <input type="hidden" name="user_id" value="{{user.user_id}}" hidden >
           <input type="hidden" id="post_id" value="{{message.id}}" hidden >
           <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
@@ -76,6 +76,7 @@ export default {
     };
   },
    beforeMount(){
+    this.checkSession();
     this.getUser();
     this.getComment();
     this.getThePost();
@@ -83,9 +84,18 @@ export default {
     this.getUserConnectedDislikes();
   },
   methods: {
-    del(id){
+    async checkSession(){
+      const token = localStorage.getItem('token');
+      console.log(token);
+      if(!token){
+      const self = this;
+      self.$router.push({name: 'Login'});
+      }
+
+    },
+    async del(id){
       console.log(id);
-      fetch(
+      await fetch(
         "http://localhost:3000/api/post/comment/" + id,
         {
           method: "delete",
@@ -103,9 +113,9 @@ export default {
       const res = await fetch('http://localhost:3000/api/post/comment/all/' + id);
       const data2 = await res.json();
       this.comments = data2;
-      if(data2 == ""){
+      if(data2 === null){
         const noComm = document.getElementById('noComm');
-        noComm.innerHTML= "Il n'y a pas encore de commentaires sur ce post ..."; 
+        noComm.innerHTML= "Il n'y a pas encore de commentaires sur ce post"; 
       }
     },
     
@@ -130,20 +140,20 @@ export default {
       })
     },
     
-    createAcomment() {
+    async createAcomment() {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let postId = lastURLSegment;  
-      const comment = document.getElementById('comment').value;
+      // let comment = document.getElementById('comment').value;
    
       const postData = {
         postId: postId,
         userId: this.user.id,
-        message: comment
+        message: this.post.content
       };
       
         console.log(postData);
-      fetch("http://localhost:3000/api/post/comment",{
+     await fetch("http://localhost:3000/api/post/comment",{
         method: "POST",
         headers: { 'Accept': 'application/json',
         'Content-Type': 'application/json'},
@@ -155,6 +165,8 @@ export default {
           
         }
       });
+          this.post.content = "";
+          this.getComment()
     },
     unlike(id) {
        var pageURL = window.location.href;
