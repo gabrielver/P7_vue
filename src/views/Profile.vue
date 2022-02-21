@@ -439,7 +439,6 @@ header {
 
 header .nav{
  position: fixed;
-top: 3;
 }
 
 .nav button{
@@ -521,7 +520,7 @@ cursor: pointer;
         font-size: 12px;
         
       }
-      .image {
+.image {
        padding-top: 17px;
 
       }

@@ -348,7 +348,7 @@ export default {
 </script>
 <style>
 form{
-display: flex;
+
 align-items: center;
 justify-content: center;
 

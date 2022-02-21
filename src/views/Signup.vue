@@ -208,7 +208,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   background: #f7f7f7;
-  padding: 0 15%;
+  padding: 5% 15%;
 }
 .wrapper {
   background: #fff;
