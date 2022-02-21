@@ -110,7 +110,12 @@ export default {
        var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let id = lastURLSegment;  
-      const res = await fetch('http://localhost:3000/api/post/comment/all/' + id);
+      const res = await fetch('http://localhost:3000/api/post/comment/all/' + id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      });
       const data2 = await res.json();
       this.comments = data2;
       if(data2 === null){
@@ -123,7 +128,12 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.split('/');
       let id = lastURLSegment[5];  
-      const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
+      const res1 = await fetch('http://localhost:3000/api/auth/user/' + id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      });
       const data1 = await res1.json();
       this.user = data1;
       console.log("users:",data1);
@@ -133,7 +143,12 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let id = lastURLSegment;   
-      fetch('http://localhost:3000/api/post/' + id)
+      fetch('http://localhost:3000/api/post/' + id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      })
       .then(response => response.json() )
       .then(data => {
         this.messages = data
@@ -156,7 +171,8 @@ export default {
      await fetch("http://localhost:3000/api/post/comment",{
         method: "POST",
         headers: { 'Accept': 'application/json',
-        'Content-Type': 'application/json'},
+        'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')},
         body: JSON.stringify(postData)
       })
       .then(function (res) {
@@ -176,7 +192,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')
         },
 
         body: JSON.stringify({
@@ -204,7 +221,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')
         },
 
         body: JSON.stringify({
@@ -236,7 +254,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')
         },
 
         body: JSON.stringify({
@@ -266,7 +285,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')
         },
 
         body: JSON.stringify({
@@ -290,7 +310,12 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.split('/');
       let id = lastURLSegment[5];  
-      fetch('http://localhost:3000/api/post/comment/like/'+ id)
+      fetch('http://localhost:3000/api/post/comment/like/'+ id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      })
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
@@ -304,7 +329,12 @@ export default {
      var pageURL = window.location.href;
       var lastURLSegment = pageURL.split('/');
       let id = lastURLSegment[5];  
-      fetch('http://localhost:3000/api/post/comment/dislike/'+ id)
+      fetch('http://localhost:3000/api/post/comment/dislike/'+ id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      })
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {

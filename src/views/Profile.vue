@@ -204,7 +204,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')
         },
 
         body: JSON.stringify({
@@ -232,7 +233,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token'),
         },
 
         body: JSON.stringify({
@@ -264,7 +266,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')
         },
 
         body: JSON.stringify({
@@ -294,7 +297,8 @@ export default {
         method: "POST",
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization':  localStorage.getItem('token')
         },
 
         body: JSON.stringify({
@@ -318,7 +322,12 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let id = lastURLSegment;  
-      fetch('http://localhost:3000/api/post/like/'+ id)
+      fetch('http://localhost:3000/api/post/like/'+ id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      })
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
@@ -332,7 +341,12 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let id = lastURLSegment;  
-      fetch('http://localhost:3000/api/post/dislike/'+ id)
+      fetch('http://localhost:3000/api/post/dislike/'+ id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      })
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
@@ -346,7 +360,12 @@ export default {
       var pageURL = window.location.href;
       var lastURLSegment = pageURL.substr(pageURL.lastIndexOf('/') + 1);
       let id = lastURLSegment;  
-      const res1 = await fetch('http://localhost:3000/api/auth/user/' + id);
+      const res1 = await fetch('http://localhost:3000/api/auth/user/' + id,
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      });
       const data1 = await res1.json();
       this.user = data1;
       console.log("user:",data1);
@@ -384,7 +403,12 @@ export default {
 
     getcommentFromPost() {
   
-      fetch('http://localhost:3000/api/post/comment/all')
+      fetch('http://localhost:3000/api/post/comment/all',
+      {
+        headers:{
+          'Authorization':  localStorage.getItem('token')
+        }
+      })
       .then(response => response.json() )
       .then(data => {
         for (let i = 0; i < data.length; i++) {
