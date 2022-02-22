@@ -123,7 +123,6 @@ export default {
   methods: {
     async checkSession(){
       const token = localStorage.getItem('token');
-      console.log(token);
       if(!token){
       const self = this;
       self.$router.push({name: 'Login'});
@@ -151,11 +150,9 @@ export default {
     onFileSelected(event){
       this.selectedFile = event.target.files[0]
       this.selectedFile.filename = event.target.files[0].name
-      console.log(this.selectedFile)
 
       const imgPreview = document.getElementById('imgPreview');
       const previewImg = document.getElementById('preview');
-      console.log(previewImg);
       const file = this.selectedFile;
       if(file){
         const reader = new FileReader();
@@ -332,8 +329,7 @@ export default {
       .then(data => {
         for (let i = 0; i < data.length; i++) {
           this.userConnectedLikes.push(data[i].postId)
-        }
-        console.log( this.userConnectedLikes)
+        }        
       })
     },
 
@@ -352,7 +348,6 @@ export default {
         for (let i = 0; i < data.length; i++) {
           this.userConnectedDislikes.push(data[i].postId)
         }
-        console.log( this.userConnectedDislikes)
       })
     },
   
@@ -368,9 +363,6 @@ export default {
       });
       const data1 = await res1.json();
       this.user = data1;
-      console.log("user:",data1);
-
-     
     },
  
      async createAPost() {
@@ -396,9 +388,7 @@ export default {
         imgPreview.style.display = "none";
         previewImg.style.display = "none";
          this.post.content = "";
-
          this.getAllPosts();
-        
     },
 
     getcommentFromPost() {
@@ -596,7 +586,8 @@ background: none;
   text-align: start;
 }
 .image img {
-  width: 80%;
+  max-width: 80%;
+  min-width: 30%;
 }
 .like_dislike{
   display: flex;

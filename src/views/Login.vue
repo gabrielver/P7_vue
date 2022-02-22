@@ -75,7 +75,6 @@ export default {
         })
         .then (function(data) {
           localStorage.setItem('token', data.token);
-          console.log(data.token)
           idx = data.userId,
           
          
