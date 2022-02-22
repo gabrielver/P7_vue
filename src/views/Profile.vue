@@ -20,7 +20,7 @@
                 </span>
               </label>
           </div>        
-          <button type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+          <button  type="submit" aria-label="envoyer" ><i class="fa-solid fa-paper-plane"></i></button>
           </form>
           
         </div>
@@ -565,7 +565,7 @@ align-items: center;
  text-align: start;
 }
 #message_details .info span{
-  color: grey;
+  color: rgb(96, 122, 131);
   font-size: 11px;
 }
 #message_details .info p{
@@ -606,7 +606,7 @@ background: none;
   border-radius: 0px 0px 16px 16px;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-top: 0.5px solid rgb(214, 214, 214);
-  color: grey;
+  color: rgb(101, 110, 136);
 }
 .like_dislike span{
   margin-left: 0.25rem;
@@ -622,7 +622,7 @@ background: none;
 .commenter button{
   border: none;
   background: none;
-  color: grey;
+  color: rgb(99, 111, 128);
   cursor: pointer;
 }
 .likes i, .dislikes i {
@@ -691,7 +691,7 @@ color: rgb(0, 41, 221);
     cursor: pointer;
     }
     form textarea{
-    width: 25rem;
+    width: 100%;
     height: 5rem;
     resize:both;
     overflow: auto;

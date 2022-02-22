@@ -2,7 +2,7 @@
   <div id="app">
       <div class="wrapper">
         <section class="form login">
-          <header>Pour supprimer votre compte, veuillez inserer votre email et mot de passe</header>
+          <header class="delete" >Pour supprimer votre compte, veuillez inserer votre email et mot de passe</header>
           <form class="cart__order__form" @submit.prevent="deleteUser"  autocomplete="off">
             <div id="error-text"></div>
             <div id="signup">
@@ -78,6 +78,9 @@ export default {
   background: rgba(255, 0, 0, 0.171);
   color: red;
   
+}
+.delete {
+  top: 7%;
 }
 .warning {
   color: red;

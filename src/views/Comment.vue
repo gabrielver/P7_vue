@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="body">
       <div >
         <i @click="goBack()" class="fa-solid fa-circle-xmark"></i>
         <p> laisser un Commentaire</p>
@@ -21,7 +21,7 @@
           <textarea id="comment"  v-model="post.content" placeholder="Pour commenter, c'est ici que ça se passe!"></textarea>
           <input type="hidden" name="user_id" value="{{user.user_id}}" hidden >
           <input type="hidden" id="post_id" value="{{message.id}}" hidden >
-          <button id="button" type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+          <button id="button"  aria-label="envoyer" type="submit"><i class="fa-solid fa-paper-plane"></i></button>
         </form>
         <div class="commentairePoster">
           <p id="noComm">Commentaires sur le post</p>
@@ -118,6 +118,7 @@ export default {
       });
       const data2 = await res.json();
       this.comments = data2;
+      console.log(this.comments);
       if(data2 === null){
         const noComm = document.getElementById('noComm');
         noComm.innerHTML= "Il n'y a pas encore de commentaires sur ce post"; 
@@ -347,6 +348,11 @@ export default {
 
 </script>
 <style>
+.body{
+  background: white;
+   border-radius: 17px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
 form{
 
 align-items: center;
@@ -361,6 +367,9 @@ justify-content: center;
     border: none;
     cursor: pointer;
     }
+    .commentairePoster{
+      background: rgba(224, 224, 224, 0.705);
+    }
 @media screen and (max-width: 600px){
       
       header .details{
@@ -370,7 +379,7 @@ justify-content: center;
 
       }
       .details form{
-       width: 100%;
+      
         align-items: center;
         
       }

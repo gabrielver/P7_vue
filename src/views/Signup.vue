@@ -207,16 +207,15 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  background: #f7f7f7;
+  background: #d4d4d4;
   padding: 5% 15%;
 }
 .wrapper {
-  background: #fff;
+  background: rgb(165, 165, 165);
 
   width: 100%;
   border-radius: 16px;
-  box-shadow: 0 0 128px 0 rgba(0, 0, 0, 0.1),
-    0 32px 64px -48px rgba(0, 0, 0, 0.5);
+  
 }
 
 /* Login & Signup Form CSS Start */
@@ -323,7 +322,7 @@ body {
   padding: 18px 30px;
 }
 .chat-area{
-  background: #e2e2e2;
+  background: #d4d4d4;
 }
 .chat-area header .back-icon {
   color: #333;
