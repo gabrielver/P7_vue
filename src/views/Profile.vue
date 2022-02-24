@@ -529,6 +529,10 @@ width: 60%;
 #error{
   color: red;
   font-size: 13px;
+  background: white;
+  border-radius: 25px;
+  padding: 0 1rem;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .icon i {
