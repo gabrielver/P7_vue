@@ -4,13 +4,15 @@
       <header class="head">
         <div class="nav"> 
           <button  @click="getOut()"><router-link :to="{name:'Login'}" replace>Déconnection</router-link></button>
-        </div>      
+        </div>  
+           
         <div class="details">
           <i id="fa-user" class="fa-solid fa-user"></i>
           <span>{{user.name}}</span>
+          
           <form   class="cart__order__form" @submit.prevent="createAPost"  autocomplete="off">        
           <input type="text" name="userid" v-model="post.userid" hidden>
-          <textarea id="message" type="text" name="message" v-model="post.content" class="input-field" placeholder="A quoi tu penses ..." autocomplete="off"></textarea>
+          <textarea id="message" type="text" name="message" v-model="post.content" class="input-field" placeholder="A quoi tu penses ..." autocomplete="off" ></textarea>
           <div class="image">
               <label class="img">
                 <input type="file" name="image" @change="onFileSelected" hidden/>
@@ -20,10 +22,11 @@
                 </span>
               </label>
           </div>        
-          <button  type="submit" aria-label="envoyer" ><i class="fa-solid fa-paper-plane"></i></button>
+          <button  type="submit"  aria-label="envoyer" ><i class="fa-solid fa-paper-plane"></i></button>
           </form>
           
         </div>
+        <div id="error"></div> 
         <div id="imgPreview">
            <img id="preview" src="" alt="">
         </div>
@@ -48,7 +51,8 @@
             <div class="image">
               <img :src="`${message.imageUrl}`" alt="">
             </div>
-            <p id="content">{{message.content}}</p>
+            <p v-if="message.content === 'undefined'" id="content"></p>
+            <p v-else id="content">{{message.content}}</p>
           </div>
           <div class="like_dislike">
             <div class="likes">
@@ -121,6 +125,14 @@ export default {
     this.getcommentFromPost();
   },
   methods: {
+    /*async checkimg(){
+
+      const error = document.getElementById('error');
+            if(this.selectedFile.filename == null){
+    error.innerHTML = `le post doit imperativement comporter une image`;
+    }
+    },*/
+
     async checkSession(){
       const token = localStorage.getItem('token');
       if(!token){
@@ -151,6 +163,7 @@ export default {
       this.selectedFile = event.target.files[0]
       this.selectedFile.filename = event.target.files[0].name
 
+     
       const imgPreview = document.getElementById('imgPreview');
       const previewImg = document.getElementById('preview');
       const file = this.selectedFile;
@@ -159,6 +172,7 @@ export default {
         reader.addEventListener('load', function() {
           imgPreview.style.display = "flex";
           previewImg.style.display = "block";
+        
           previewImg.setAttribute("src", this.result);
         });
         reader.readAsDataURL(file);
@@ -368,14 +382,25 @@ export default {
      async createAPost() {
        
     const content= this.post.content;
-     const imgPreview = document.getElementById('imgPreview');
-      const previewImg = document.getElementById('preview');
+    const imgPreview = document.getElementById('imgPreview');
+    const previewImg = document.getElementById('preview');
+    
+
+    //console.log(this.selectedFile.filename)
+     const error = document.getElementById('error');
+            if(this.selectedFile.filename == null){
+    error.innerHTML = `votre post doit imperativement comporter une image`;
+    }else{
+      error.innerHTML = ""
+    }
+   
 
      let formData = new FormData();
      formData.append( 'image',this.selectedFile);
      formData.append( 'userId', this.user.id);
      formData.append( 'content', content);
-    
+
+
     await  fetch(
         "http://localhost:3000/api/post",
         {
@@ -387,6 +412,9 @@ export default {
         })
         imgPreview.style.display = "none";
         previewImg.style.display = "none";
+        this.selectedFile = "";
+
+
          this.post.content = "";
          this.getAllPosts();
     },
@@ -421,17 +449,14 @@ header {
     border-radius: 17px;
     background: white;
     width: 100%;
-    top: 3%;
     left: 50%;
     transform: translate(-50%, -50%);
    
 }
 
-header .nav{
- position: fixed;
-}
 
 .nav button{
+  margin-top: 6rem;
   border: none;
   border-radius: 17px;
   padding: 0rem 0.5rem;
@@ -448,7 +473,7 @@ header .details{
     border-radius: 17px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   width: 80%;
-  margin-top: 15rem;
+  margin-top: 1rem;
 
 
 }
@@ -499,6 +524,10 @@ width: 60%;
   align-items: center;
 }
 
+#error{
+  color: red;
+}
+
 .icon i {
  background: rgba(1, 27, 172, 0.363);
  border-radius: 0px 17px 17px 0px;
@@ -519,15 +548,14 @@ cursor: pointer;
   justify-content: center;
   align-items: center;
   padding-top: 1rem;
-  width: 300px;
   min-height: 100px;
-
+ 
   
 }
 #preview{
   display: none;
-  width: 100%;
-  height: 100%;
+  width: 50%;
+  height: 50%;
   border: 1px solid;
  
 }

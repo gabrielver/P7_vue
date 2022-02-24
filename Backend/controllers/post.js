@@ -38,6 +38,7 @@ exports.getAllDislikes = async (req, res, next) => {
 
 exports.createPost = (req, res, next) => {
   delete req.body.user_id;
+
   const post = Post.create({
     userId: req.body.userId,
     content: req.body.content,
