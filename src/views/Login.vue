@@ -95,7 +95,7 @@ export default {
 header img{
 width: 40%;
 height: 40%;
-padding-top: 1rem;
+
 
 }
 

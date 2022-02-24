@@ -22,7 +22,7 @@
                 </span>
               </label>
           </div>        
-          <button  type="submit"  aria-label="envoyer" ><i class="fa-solid fa-paper-plane"></i></button>
+          <button  type="submit" aria-label="envoyer" ><i class="fa-solid fa-paper-plane"></i></button>
           </form>
           
         </div>
@@ -450,13 +450,15 @@ header {
     background: white;
     width: 100%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    height: 30%;
+    top: 0.5px;
+    transform: translate( -50%);
    
 }
 
 
 .nav button{
-  margin-top: 6rem;
+  margin-top: 6.5rem;
   border: none;
   border-radius: 17px;
   padding: 0rem 0.5rem;
@@ -526,6 +528,7 @@ width: 60%;
 
 #error{
   color: red;
+  font-size: 13px;
 }
 
 .icon i {
@@ -544,20 +547,24 @@ cursor: pointer;
 
       }
 #imgPreview{
+  
   display: none;
   justify-content: center;
   align-items: center;
-  padding-top: 1rem;
+  border-radius: 25px;
   min-height: 100px;
  
   
 }
 #preview{
+  background: black;
+  object-fit: contain;
   display: none;
-  width: 50%;
-  height: 50%;
+  width: 190px;
+  height: 140px;
   border: 1px solid;
- 
+ margin-top: 3rem;
+ border-radius: 25px;
 }
 .box{
   padding-top: 10rem;
@@ -709,6 +716,7 @@ color: rgb(0, 41, 221);
     border: none;
     cursor: pointer;
     }
+
     form textarea{
     width: 100%;
     height: 5rem;
@@ -732,12 +740,19 @@ color: rgb(0, 41, 221);
         display: flex;
         flex-direction: column;
         width: 100%;
-
+      
       }
+      .nav{
+        margin-top: 2rem;
+      }
+   
       .details form{
        width: 100%;
         align-items: center;
         
+      }
+      .details form textarea{
+        height: 42%;
       }
       form button{
         padding: 0;
